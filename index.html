@@ -46,7 +46,7 @@ input[type=number]:focus{border-color:rgba(101,216,255,.8);box-shadow:0 0 0 3px 
 .planner-grid{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end} .btn{border:1px solid rgba(255,211,106,.32);background:rgba(255,211,106,.09);color:var(--gold2);border-radius:11px;padding:13px 16px;font-weight:800;cursor:pointer} .btn:hover{background:rgba(255,211,106,.14)}
 .recommend{margin-top:14px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px} .rec{border:1px solid var(--border);background:#0b1016;border-radius:10px;padding:12px} .rec small{color:var(--muted)} .rec strong{display:block;margin-top:4px;font-size:18px}
 .footer{text-align:center;color:#647084;font-size:11px;margin-top:22px}
-@media(max-width:780px){.wrap{width:min(100% - 18px,1040px);margin-top:18px} .hero{padding:26px 22px} .inputs,.weights,.rules,.stats4,.recommend{grid-template-columns:1fr} .planner-grid{grid-template-columns:1fr} .body{padding:16px} .cardhead,.togglewrap{padding-left:16px;padding-right:16px} .row{align-items:flex-start} .big{font-size:26px}}
+@media(max-width:780px){.wrap{width:min(100% - 18px,1040px);margin-top:18px} .hero{padding:26px 22px} .inputs,.weights,.rules,.stats4,.recommend,.planner-options{grid-template-columns:1fr} .planner-grid{grid-template-columns:1fr} .body{padding:16px} .cardhead,.togglewrap{padding-left:16px;padding-right:16px} .row{align-items:flex-start} .big{font-size:26px}}
 
 .creator-strip{
   margin-top:18px;
@@ -79,6 +79,18 @@ input[type=number]:focus{border-color:rgba(101,216,255,.8);box-shadow:0 0 0 3px 
   display:block;
   flex:0 0 auto;
 }
+
+
+.planner-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px;text-align:left}
+.plan-option{background:#0b1016;border:1px solid var(--border);border-radius:12px;padding:14px}
+.plan-option.best{border-color:rgba(255,211,106,.42);background:linear-gradient(180deg,rgba(255,211,106,.055),#0b1016)}
+.plan-option h4{margin:0 0 5px;font-size:14px}
+.plan-option .option-dmg{font-size:22px;font-weight:900;color:var(--gold);margin-bottom:10px}
+.plan-option .pair{padding:7px 0;border-top:1px solid rgba(154,176,210,.11);font-size:12px;color:#cbd5e1}
+.plan-option .pair:first-of-type{border-top:0}
+.plan-option .pair strong{color:#fff}
+.plan-option .option-meta{margin-top:9px;color:var(--muted);font-size:11px;line-height:1.45}
+.planner-empty{grid-column:1/-1;color:var(--muted);font-size:12px;padding:8px 0;text-align:center}
 
 </style>
 </head>
@@ -123,7 +135,7 @@ input[type=number]:focus{border-color:rgba(101,216,255,.8);box-shadow:0 0 0 3px 
   </div>
 
   <div class="togglewrap">
-    <div class="togglecopy"><strong>Target Damage Planner</strong><span>Calculates the minimum additional stat points required to reach a selected total DPS target.</span></div>
+    <div class="togglecopy"><strong>Target Damage Planner</strong><span>Shows multiple legal 5/5 Astrogem upgrade paths to reach a selected total DPS target. Every option adds two stats together according to the Astrogem type.</span></div>
     <label class="switch"><input id="plannerToggle" type="checkbox"><span class="slider"></span></label>
   </div>
 
@@ -133,14 +145,15 @@ input[type=number]:focus{border-color:rgba(101,216,255,.8);box-shadow:0 0 0 3px 
         <div><label>Target Total DMG Increase %</label><input id="target_pct" type="number" value="12" min="2.89" max="18.62" step="0.01"></div>
         <button id="planBtn" class="btn" type="button">Calculate Points Needed</button>
       </div>
+        <div class="note">
+          Planner options use complete 5/5 Astrogem-equivalent upgrades. A 3WP gem adds Atk. Power + Additional Damage, a 4WP gem adds Atk. Power + Boss Damage, and a 5WP gem adds Additional Damage + Boss Damage. A recommendation will never add only one stat.
+        </div>
       <div class="plannerResult">
         <div class="compareLabel">Target Result</div>
         <div id="need_points" class="compareValue neutral">—</div>
         <div id="plan_sub" class="compareSub">Enter a target total DPS increase.</div>
-        <div class="recommend">
-          <div class="rec"><small>Add Atk. Power</small><strong id="rec_ap">—</strong></div>
-          <div class="rec"><small>Add Boss Damage</small><strong id="rec_boss">—</strong></div>
-          <div class="rec"><small>Add Additional Damage</small><strong id="rec_add">—</strong></div>
+        <div id="planner_options" class="planner-options">
+          <div class="planner-empty">Upgrade options will appear here.</div>
         </div>
       </div>
     </div>
@@ -368,54 +381,153 @@ function updateComparison(){
 
 function planTarget(){
   const A=calc("a");
-  const need=document.getElementById("need_points"),sub=document.getElementById("plan_sub");
-  const rap=document.getElementById("rec_ap"),rb=document.getElementById("rec_boss"),ra=document.getElementById("rec_add");
-  if(!A.possible){need.textContent="—";sub.textContent="Ark Grid A exceeds the legal layout limits.";rap.textContent=rb.textContent=ra.textContent="—";return}
+  const need=document.getElementById("need_points");
+  const sub=document.getElementById("plan_sub");
+  const optionsEl=document.getElementById("planner_options");
+
+  function clearOptions(message){
+    optionsEl.innerHTML=`<div class="planner-empty">${message}</div>`;
+  }
+
+  if(!A.possible){
+    need.textContent="—";
+    need.className="compareValue neutral";
+    sub.textContent="Ark Grid A exceeds the legal layout limits.";
+    clearOptions("Enter a legal Ark Grid A first.");
+    return;
+  }
 
   let target=parseFloat(document.getElementById("target_pct").value);
-  if(!Number.isFinite(target))target=A.pct;
+  if(!Number.isFinite(target)) target=A.pct;
   target=Math.max(BASE_DMG,Math.min(MAX.pct,target));
   document.getElementById("target_pct").value=target.toFixed(2);
 
   if(target<=A.pct+1e-9){
-    need.textContent="0 points";need.className="compareValue good";
+    need.textContent="0 extra gems";
+    need.className="compareValue good";
     sub.textContent=`Current total damage is +${A.pct.toFixed(2)}%, which meets the +${target.toFixed(2)}% target.`;
-    rap.textContent=rb.textContent=ra.textContent="+0";return;
+    clearOptions("No additional 5/5 Astrogem upgrade is required.");
+    return;
   }
 
-  const required=DfromTotalDmg(target)-A.D;
-  let best=null;
+  /*
+    Planner units are complete 5/5 Astrogem-equivalent upgrades:
+      3 WP: +5 Atk. Power +5 Additional Damage
+      4 WP: +5 Atk. Power +5 Boss Damage
+      5 WP: +5 Additional Damage +5 Boss Damage
 
-  for(const l of A.layouts){
-    const caps={ap:Math.max(0,Math.floor(l.apCap-A.ap)),boss:Math.max(0,Math.floor(l.bossCap-A.boss)),add:Math.max(0,Math.floor(l.addCap-A.add))};
-    const totalHead=caps.ap+caps.boss+caps.add;
-    if(COEF.ap*caps.ap+COEF.boss*caps.boss+COEF.add*caps.add+1e-12<required)continue;
+    This prevents impossible recommendations such as adding only Boss Damage.
+    Because the calculator only knows aggregate stat totals rather than each
+    individual equipped gem, these are legal upgrade paths whose final totals
+    can exist under the Ark Grid rules.
+  */
+  const candidates=[];
 
-    for(let n=1;n<=totalHead;n++){
-      let foundForN=false;
-      for(let b=0;b<=Math.min(caps.boss,n);b++) for(let ad=0;ad<=Math.min(caps.add,n-b);ad++){
-        const ap=n-b-ad;
-        if(ap<0||ap>caps.ap)continue;
-        const gain=b*COEF.boss+ad*COEF.add+ap*COEF.ap;
-        if(gain+1e-12<required)continue;
-        const excess=gain-required;
-        if(!best||n<best.n||(n===best.n&&excess<best.excess))best={n,boss:b,add:ad,ap,gain,excess};
-        foundForN=true;
+  for(let n3=0;n3<=24;n3++){
+    for(let n4=0;n4<=24-n3;n4++){
+      for(let n5=0;n5<=24-n3-n4;n5++){
+        const gems=n3+n4+n5;
+        if(gems===0) continue;
+
+        const dAp=5*(n3+n4);
+        const dBoss=5*(n4+n5);
+        const dAdd=5*(n3+n5);
+
+        const finalAp=A.ap+dAp;
+        const finalBoss=A.boss+dBoss;
+        const finalAdd=A.add+dAdd;
+
+        // Final aggregate totals must correspond to at least one legal 6-core layout.
+        if(feasibleLayoutsFor(finalAp,finalBoss,finalAdd).length===0) continue;
+
+        const finalD=COEF.ap*finalAp+COEF.boss*finalBoss+COEF.add*finalAdd;
+        const finalPct=totalDmgFromD(finalD);
+        if(finalPct+1e-9<target) continue;
+
+        candidates.push({
+          n3,n4,n5,gems,dAp,dBoss,dAdd,
+          finalPct,
+          overshoot:finalPct-target,
+          addedPoints:dAp+dBoss+dAdd
+        });
       }
-      if(foundForN)break;
     }
   }
 
-  if(!best){
-    need.textContent="Not reachable";need.className="compareValue bad";
-    sub.textContent=`The selected +${target.toFixed(2)}% target cannot be reached from these totals without exceeding a legal Ark Grid layout.`;
-    rap.textContent=rb.textContent=ra.textContent="—";return;
+  if(!candidates.length){
+    need.textContent="Not reachable";
+    need.className="compareValue bad";
+    sub.textContent=`The selected +${target.toFixed(2)}% target cannot be reached with legal 5/5 Astrogem upgrade pairs from these totals.`;
+    clearOptions("No legal paired-stat upgrade path was found.");
+    return;
   }
 
-  const finalPct=totalDmgFromD(A.D+best.gain);
-  need.textContent=best.n+" points";need.className="compareValue good";
-  sub.textContent=`Minimum additional effect points required to reach at least +${target.toFixed(2)}% total DMG. Result: +${finalPct.toFixed(2)}%.`;
-  rap.textContent="+"+best.ap;rb.textContent="+"+best.boss;ra.textContent="+"+best.add;
+  // Best-efficiency: fewest whole 5/5 gem upgrades, then least overshoot.
+  const byEfficiency=[...candidates].sort((a,b)=>
+    a.gems-b.gems || a.overshoot-b.overshoot || b.n5-a.n5 || b.n4-a.n4
+  );
+  const best=byEfficiency[0];
+
+  // Build several meaningfully different legal paths.
+  const picks=[];
+  function addPick(label, arr){
+    for(const c of arr){
+      const key=`${c.n3},${c.n4},${c.n5}`;
+      if(!picks.some(p=>p.key===key)){
+        picks.push({...c,label,key});
+        return;
+      }
+    }
+  }
+
+  addPick("Fewest Gems", byEfficiency);
+
+  // Boss-focused path: among near-minimal gem counts, favor 5WP then 4WP.
+  const bossFocused=[...candidates].sort((a,b)=>
+    a.gems-b.gems ||
+    (b.dBoss-a.dBoss) ||
+    a.overshoot-b.overshoot
+  );
+  addPick("Boss-Focused", bossFocused);
+
+  // Balanced path: minimize spread between the three added stat totals.
+  const balanced=[...candidates].sort((a,b)=>{
+    const spreadA=Math.max(a.dAp,a.dBoss,a.dAdd)-Math.min(a.dAp,a.dBoss,a.dAdd);
+    const spreadB=Math.max(b.dAp,b.dBoss,b.dAdd)-Math.min(b.dAp,b.dBoss,b.dAdd);
+    return a.gems-b.gems || spreadA-spreadB || a.overshoot-b.overshoot;
+  });
+  addPick("Balanced", balanced);
+
+  // Additional-damage-focused alternative if one of the above duplicated.
+  if(picks.length<3){
+    const addFocused=[...candidates].sort((a,b)=>
+      a.gems-b.gems || (b.dAdd-a.dAdd) || a.overshoot-b.overshoot
+    );
+    addPick("Additional-Focused", addFocused);
+  }
+
+  need.textContent=`${best.gems} × 5/5`;
+  need.className="compareValue good";
+  sub.textContent=`Minimum complete 5/5 Astrogem-equivalent upgrades needed to reach at least +${target.toFixed(2)}% total DMG. Multiple legal stat-pair options are shown below.`;
+
+  function gemLine(count,wp,label,pair){
+    if(!count) return "";
+    return `<div class="pair"><strong>${count}× ${wp}WP ${label}</strong><br>${pair}</div>`;
+  }
+
+  optionsEl.innerHTML=picks.map((p,idx)=>`
+    <div class="plan-option ${idx===0?"best":""}">
+      <h4>${p.label}</h4>
+      <div class="option-dmg">+${p.finalPct.toFixed(2)}% DMG</div>
+      ${gemLine(p.n3,3,"Astrogem","+5 Atk. Power +5 Additional Damage")}
+      ${gemLine(p.n4,4,"Astrogem","+5 Atk. Power +5 Boss Damage")}
+      ${gemLine(p.n5,5,"Astrogem","+5 Additional Damage +5 Boss Damage")}
+      <div class="option-meta">
+        Total added stats: +${p.dAp} Atk. • +${p.dBoss} Boss • +${p.dAdd} Additional<br>
+        ${p.gems} complete 5/5 Astrogem-equivalent upgrade${p.gems===1?"":"s"} • ${p.addedPoints} effect points
+      </div>
+    </div>
+  `).join("");
 }
 
 document.querySelectorAll('input[type=number]').forEach(el=>el.addEventListener("input",updateComparison));
