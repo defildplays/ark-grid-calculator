@@ -8,82 +8,56 @@
 <style>
   :root{
     --bg:#07090d;
-    --panel:rgba(15,19,26,.88);
-    --panel2:rgba(10,13,18,.92);
+    --panel:#10151d;
+    --panel2:#0b0f15;
     --border:rgba(154,176,210,.16);
     --text:#f5f7fb;
     --muted:#96a2b5;
     --gold:#ffd36a;
     --gold2:#fff0b7;
     --cyan:#65d8ff;
-    --violet:#a784ff;
     --green:#55e39a;
     --red:#ff7070;
-    --shadow:0 24px 70px rgba(0,0,0,.45);
   }
 
   *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
+  html,body{margin:0;padding:0}
   body{
-    margin:0;
     min-height:100vh;
-    font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
     color:var(--text);
-    overflow-x:hidden;
     background:
-      radial-gradient(circle at 12% 8%, rgba(101,216,255,.09), transparent 24%),
-      radial-gradient(circle at 88% 3%, rgba(167,132,255,.10), transparent 28%),
-      radial-gradient(circle at 50% 30%, rgba(255,211,106,.035), transparent 34%),
-      linear-gradient(180deg,#07090d 0%,#090c12 42%,#07090d 100%);
-  }
-
-  body::before{
-    content:"";
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    opacity:.16;
-    background-image:
-      linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
-    background-size:48px 48px;
-    mask-image:linear-gradient(to bottom, black, transparent 70%);
-  }
-    to{transform:translate3d(12px,16px,0) scale(1.05)}
+      radial-gradient(circle at 12% 0%, rgba(101,216,255,.07), transparent 28%),
+      radial-gradient(circle at 88% 0%, rgba(167,132,255,.07), transparent 30%),
+      linear-gradient(180deg,#07090d 0%,#090c12 50%,#07090d 100%);
   }
 
   .wrap{
     width:min(1040px,calc(100% - 28px));
     margin:32px auto 72px;
-    position:relative;
   }
 
   .hero{
     position:relative;
     overflow:hidden;
-    padding:34px 34px 30px;
+    padding:34px;
     border:1px solid rgba(255,211,106,.24);
-    background:
-      linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.012)),
-      rgba(11,14,20,.88);
     border-radius:22px;
-    box-shadow:0 12px 34px rgba(0,0,0,.28);
+    background:linear-gradient(135deg,rgba(255,255,255,.035),rgba(255,255,255,.01)),#0b0e14;
+    box-shadow:0 12px 32px rgba(0,0,0,.26);
     margin-bottom:20px;
-    isolation:isolate;
   }
+
   .hero::before{
     content:"";
     position:absolute;
-    width:320px;
-    height:320px;
-    right:-110px;
+    width:280px;
+    height:280px;
     top:-150px;
+    right:-80px;
     border-radius:50%;
-    background:radial-gradient(circle,rgba(101,216,255,.10),rgba(167,132,255,.05) 35%,transparent 68%);
-    z-index:-1;
+    background:radial-gradient(circle,rgba(101,216,255,.10),rgba(167,132,255,.04) 40%,transparent 70%);
     pointer-events:none;
-  }
-    88%,100%{transform:translateX(120%)}
   }
 
   .brandline{
@@ -99,15 +73,22 @@
   }
 
   .sigil{
-    width:28px;height:28px;position:relative;display:inline-grid;place-items:center;
+    width:26px;
+    height:26px;
+    position:relative;
+    display:inline-block;
   }
+
   .sigil::before,.sigil::after{
-    content:"";position:absolute;inset:3px;border:1px solid rgba(101,216,255,.75);transform:rotate(45deg);border-radius:3px;
+    content:"";
+    position:absolute;
+    border:1px solid rgba(101,216,255,.75);
+    transform:rotate(45deg);
+    border-radius:3px;
   }
-  .sigil::after{
-    inset:8px;border-color:rgba(255,211,106,.8);
-  }
-}
+
+  .sigil::before{inset:3px}
+  .sigil::after{inset:8px;border-color:rgba(255,211,106,.8)}
 
   h1{
     margin:0;
@@ -118,7 +99,7 @@
   }
 
   .title-accent{
-    background:linear-gradient(90deg,var(--gold2),var(--gold),#ffffff);
+    background:linear-gradient(90deg,var(--gold2),var(--gold),#fff);
     -webkit-background-clip:text;
     background-clip:text;
     color:transparent;
@@ -131,20 +112,14 @@
     font-size:15px;
     line-height:1.65;
   }
-  }
 
   .card{
-    contain:paint;
-    background:linear-gradient(180deg,rgba(17,22,30,.97),rgba(12,16,22,.98));
+    background:linear-gradient(180deg,#11161e,#0c1016);
     border:1px solid var(--border);
     border-radius:18px;
     overflow:hidden;
     box-shadow:0 10px 28px rgba(0,0,0,.24);
     margin-bottom:18px;
-    transition:border-color .18s ease;
-  }
-  .card:hover{
-    border-color:rgba(101,216,255,.25);
   }
 
   .cardhead{
@@ -156,7 +131,8 @@
     gap:12px;
     background:linear-gradient(90deg,rgba(255,211,106,.035),transparent 35%);
   }
-  .cardhead h2{font-size:17px;margin:0;letter-spacing:.01em}
+
+  .cardhead h2{font-size:17px;margin:0}
   .tag{
     font-size:11px;
     color:var(--gold2);
@@ -167,9 +143,10 @@
   }
 
   .body{padding:20px}
+
   .inputs{
     display:grid;
-    grid-template-columns:repeat(3,1fr);
+    grid-template-columns:repeat(3,minmax(0,1fr));
     gap:12px;
   }
 
@@ -179,16 +156,11 @@
     font-weight:700;
     display:block;
     margin-bottom:7px;
-    letter-spacing:.01em;
-  }
-
-  .field{
-    position:relative;
   }
 
   input[type="number"]{
     width:100%;
-    background:linear-gradient(180deg,#0a0e14,#080b10);
+    background:#080b10;
     border:1px solid #313b49;
     color:#fff;
     border-radius:11px;
@@ -196,32 +168,20 @@
     font-weight:800;
     padding:13px 14px;
     outline:none;
-    transition:.2s ease;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+    transition:border-color .15s ease,box-shadow .15s ease;
   }
-  input[type="number"]:hover{border-color:#465567}
+
   input[type="number"]:focus{
     border-color:rgba(101,216,255,.8);
-    box-shadow:0 0 0 3px rgba(101,216,255,.08),0 0 22px rgba(101,216,255,.06);
+    box-shadow:0 0 0 3px rgba(101,216,255,.08);
   }
 
   .resultbox{
     margin-top:17px;
-    position:relative;
-    overflow:hidden;
     border:1px solid rgba(255,211,106,.30);
-    background:
-      radial-gradient(circle at 90% 15%,rgba(255,211,106,.08),transparent 28%),
-      #0a0d12;
+    background:#0a0d12;
     border-radius:13px;
     padding:17px;
-  }
-  .resultbox::after{
-    content:"";
-    position:absolute;
-    left:0;right:0;bottom:0;height:2px;
-    background:linear-gradient(90deg,transparent,var(--gold),var(--cyan),transparent);
-    opacity:.7;
   }
 
   .row{
@@ -231,14 +191,10 @@
     gap:14px;
     padding:6px 0;
   }
+
   .row span:first-child{color:#cbd5e1;font-size:14px}
   .value{font-weight:900;font-size:18px}
-  .gold{
-    background:linear-gradient(90deg,var(--gold2),var(--gold));
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
-  }
+  .gold{color:var(--gold)}
   .big{font-size:30px;letter-spacing:-.03em}
 
   .togglewrap{
@@ -247,93 +203,109 @@
     justify-content:space-between;
     gap:16px;
     padding:17px 20px;
-    background:rgba(8,11,16,.72);
+    background:#0a0d12;
     border-top:1px solid var(--border);
   }
+
   .togglecopy strong{display:block;font-size:14px}
   .togglecopy span{display:block;color:var(--muted);font-size:12px;margin-top:3px}
 
-  .switch{position:relative;width:56px;height:31px;flex:0 0 auto}
+  .switch{
+    position:relative;
+    width:56px;
+    height:31px;
+    flex:0 0 auto;
+  }
+
   .switch input{display:none}
+
   .slider{
-    position:absolute;inset:0;cursor:pointer;background:#26303c;border-radius:999px;
-    transition:.25s;border:1px solid #3a4655;box-shadow:inset 0 1px 4px rgba(0,0,0,.35);
+    position:absolute;
+    inset:0;
+    cursor:pointer;
+    background:#26303c;
+    border-radius:999px;
+    border:1px solid #3a4655;
+    transition:background .2s ease,border-color .2s ease;
   }
-  .slider:before{
-    content:"";position:absolute;width:23px;height:23px;left:3px;top:3px;background:#fff;
-    border-radius:50%;transition:.25s;box-shadow:0 3px 10px rgba(0,0,0,.35);
+
+  .slider::before{
+    content:"";
+    position:absolute;
+    width:23px;
+    height:23px;
+    left:3px;
+    top:3px;
+    background:#fff;
+    border-radius:50%;
+    transition:transform .2s ease,background .2s ease;
   }
+
   .switch input:checked + .slider{
-    background:linear-gradient(90deg,rgba(101,216,255,.28),rgba(167,132,255,.28));
+    background:rgba(101,216,255,.20);
     border-color:rgba(101,216,255,.65);
-    box-shadow:0 0 18px rgba(101,216,255,.11);
   }
-  .switch input:checked + .slider:before{
+
+  .switch input:checked + .slider::before{
     transform:translateX(25px);
     background:var(--gold2);
   }
 
-  #comparisonArea{
-    display:grid;
-    grid-template-rows:0fr;
-    opacity:0;
-    transform:translateY(-8px);
-    transition:grid-template-rows .35s ease,opacity .3s ease,transform .35s ease;
-  }
-  #comparisonArea > div{overflow:hidden}
-  #comparisonArea.show{
-    grid-template-rows:1fr;
-    opacity:1;
-    transform:translateY(0);
-  }
+  #comparisonArea{display:none}
+  #comparisonArea.show{display:block}
 
   .compareResult{
     margin-top:15px;
     padding:20px;
     border:1px solid var(--border);
     border-radius:13px;
-    background:
-      radial-gradient(circle at 50% -20%,rgba(101,216,255,.10),transparent 50%),
-      #0a0e14;
+    background:#0a0e14;
     text-align:center;
   }
-  .compareLabel{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.14em}
-  .compareValue{font-size:36px;font-weight:950;margin:8px 0 4px;letter-spacing:-.035em}
+
+  .compareLabel{
+    color:var(--muted);
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.14em;
+  }
+
+  .compareValue{
+    font-size:36px;
+    font-weight:950;
+    margin:8px 0 4px;
+    letter-spacing:-.035em;
+  }
+
   .compareSub{font-size:13px;color:var(--muted)}
-  .good{color:var(--green);text-shadow:0 0 18px rgba(85,227,154,.15)}
-  .bad{color:var(--red);text-shadow:0 0 18px rgba(255,112,112,.14)}
+  .good{color:var(--green)}
+  .bad{color:var(--red)}
   .neutral{color:var(--text)}
 
   .section{
-    contain:paint;
     margin-top:22px;
     padding:21px;
-    background:linear-gradient(180deg,rgba(16,21,29,.90),rgba(11,15,21,.94));
+    background:linear-gradient(180deg,#10151d,#0b0f15);
     border:1px solid var(--border);
     border-radius:17px;
-    box-shadow:0 12px 36px rgba(0,0,0,.18);
+    box-shadow:0 10px 26px rgba(0,0,0,.18);
   }
+
   .section h3{margin:0 0 13px;font-size:18px}
+
   .weights{
     display:grid;
-    grid-template-columns:repeat(3,1fr);
+    grid-template-columns:repeat(3,minmax(0,1fr));
     gap:12px;
   }
+
   .weight{
-    position:relative;
-    overflow:hidden;
     background:#0a0e14;
     border:1px solid var(--border);
     border-radius:12px;
     padding:15px;
-    transition:.2s ease;
   }
-  .weight:hover{border-color:rgba(255,211,106,.25)}
-  .weight::after{
-    content:"";
-    position:absolute;inset:auto -20% -55% -20%;height:90px;
-    background:radial-gradient(circle,rgba(101,216,255,.12),transparent 65%);
-  }
+
   .weight strong{display:block;font-size:20px;margin-top:5px}
   .weight small{color:var(--muted);line-height:1.45}
 
@@ -349,7 +321,13 @@
     overflow:auto;
     white-space:pre-line;
   }
-  .note{color:var(--muted);font-size:12px;line-height:1.6;margin-top:12px}
+
+  .note{
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.6;
+    margin-top:12px;
+  }
 
   .footer{
     text-align:center;
@@ -358,22 +336,17 @@
     margin-top:22px;
   }
 
-
-  @supports (content-visibility:auto){
-    .section{content-visibility:auto;contain-intrinsic-size:500px;}
-  }
-
-  @media (prefers-reduced-motion: reduce){
-    *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
-  }
-
   @media(max-width:780px){
-    .wrap{width:min(100% - 18px,1040px);margin-top:18px}
+    .wrap{
+      width:min(100% - 18px,1040px);
+      margin-top:18px;
+    }
     .hero{padding:26px 22px}
-    .inputs{grid-template-columns:1fr}
-    .weights{grid-template-columns:1fr}
+    .inputs,.weights{grid-template-columns:1fr}
     .body{padding:16px}
     .cardhead,.togglewrap{padding-left:16px;padding-right:16px}
+    .row{align-items:flex-start}
+    .big{font-size:26px}
   }
 </style>
 </head>
@@ -395,10 +368,11 @@
     </div>
     <div class="body">
       <div class="inputs">
-        <div class="field"><label>Atk. Power</label><input id="a_ap" type="number" value="0" min="0" step="1"></div>
-        <div class="field"><label>Boss Damage</label><input id="a_boss" type="number" value="0" min="0" step="1"></div>
-        <div class="field"><label>Additional Damage</label><input id="a_add" type="number" value="0" min="0" step="1"></div>
+        <div><label>Atk. Power</label><input id="a_ap" type="number" value="0" min="0" step="1"></div>
+        <div><label>Boss Damage</label><input id="a_boss" type="number" value="0" min="0" step="1"></div>
+        <div><label>Additional Damage</label><input id="a_add" type="number" value="0" min="0" step="1"></div>
       </div>
+
       <div class="resultbox">
         <div class="row"><span>Total DMG Increase</span><span id="a_pct" class="value gold big">+0.00%</span></div>
         <div class="row"><span>Damage Score</span><span id="a_score" class="value gold">0.000</span></div>
@@ -418,31 +392,30 @@
   </section>
 
   <div id="comparisonArea">
-    <div>
-      <section class="card">
-        <div class="cardhead">
-          <h2>Ark Grid B</h2>
-          <span class="tag">Comparison Grid</span>
+    <section class="card">
+      <div class="cardhead">
+        <h2>Ark Grid B</h2>
+        <span class="tag">Comparison Grid</span>
+      </div>
+      <div class="body">
+        <div class="inputs">
+          <div><label>Atk. Power</label><input id="b_ap" type="number" value="0" min="0" step="1"></div>
+          <div><label>Boss Damage</label><input id="b_boss" type="number" value="0" min="0" step="1"></div>
+          <div><label>Additional Damage</label><input id="b_add" type="number" value="0" min="0" step="1"></div>
         </div>
-        <div class="body">
-          <div class="inputs">
-            <div class="field"><label>Atk. Power</label><input id="b_ap" type="number" value="0" min="0" step="1"></div>
-            <div class="field"><label>Boss Damage</label><input id="b_boss" type="number" value="0" min="0" step="1"></div>
-            <div class="field"><label>Additional Damage</label><input id="b_add" type="number" value="0" min="0" step="1"></div>
-          </div>
-          <div class="resultbox">
-            <div class="row"><span>Total DMG Increase</span><span id="b_pct" class="value gold big">+0.00%</span></div>
-            <div class="row"><span>Damage Score</span><span id="b_score" class="value gold">0.000</span></div>
-          </div>
 
-          <div class="compareResult">
-            <div class="compareLabel">Ark Grid B compared with Ark Grid A</div>
-            <div id="relative" class="compareValue neutral">0.00%</div>
-            <div id="relativeSub" class="compareSub">The two Ark Grids are equal.</div>
-          </div>
+        <div class="resultbox">
+          <div class="row"><span>Total DMG Increase</span><span id="b_pct" class="value gold big">+0.00%</span></div>
+          <div class="row"><span>Damage Score</span><span id="b_score" class="value gold">0.000</span></div>
         </div>
-      </section>
-    </div>
+
+        <div class="compareResult">
+          <div class="compareLabel">Ark Grid B compared with Ark Grid A</div>
+          <div id="relative" class="compareValue neutral">0.00%</div>
+          <div id="relativeSub" class="compareSub">The two Ark Grids are equal.</div>
+        </div>
+      </div>
+    </section>
   </div>
 
   <section class="section">
@@ -486,13 +459,6 @@ function num(id){
   return Number.isFinite(v) ? Math.max(0, v) : 0;
 }
 
-function animateValue(el){
-  el.animate(
-    [{transform:"scale(.98)",opacity:.82},{transform:"scale(1.035)",opacity:1},{transform:"scale(1)",opacity:1}],
-    {duration:220,easing:"ease-out"}
-  );
-}
-
 function calc(prefix){
   const ap = num(prefix+"_ap");
   const boss = num(prefix+"_boss");
@@ -501,10 +467,8 @@ function calc(prefix){
   const D = (COEF.ap * ap) + (COEF.boss * boss) + (COEF.add * add);
   const pct = (Math.exp(D / 100) - 1) * 100;
 
-  const pctEl = document.getElementById(prefix+"_pct");
-  const scoreEl = document.getElementById(prefix+"_score");
-  pctEl.textContent = "+" + pct.toFixed(2) + "%";
-  scoreEl.textContent = D.toFixed(3);
+  document.getElementById(prefix+"_pct").textContent = "+" + pct.toFixed(2) + "%";
+  document.getElementById(prefix+"_score").textContent = D.toFixed(3);
 
   return {D, pct};
 }
