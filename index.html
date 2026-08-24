@@ -3,283 +3,516 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#090b10" />
 <title>Ark Grid Astrogem DMG % Calculator</title>
 <style>
   :root{
-    --bg:#090b0f;
-    --panel:#10141a;
-    --panel2:#0d1117;
-    --border:#293241;
-    --text:#edf2f7;
-    --muted:#9aa7b5;
-    --gold:#ffc928;
-    --gold2:#ffde73;
-    --green:#49d17d;
-    --red:#ff6b6b;
-    --blue:#78b7ff;
+    --bg:#07090d;
+    --panel:rgba(15,19,26,.88);
+    --panel2:rgba(10,13,18,.92);
+    --border:rgba(154,176,210,.16);
+    --text:#f5f7fb;
+    --muted:#96a2b5;
+    --gold:#ffd36a;
+    --gold2:#fff0b7;
+    --cyan:#65d8ff;
+    --violet:#a784ff;
+    --green:#55e39a;
+    --red:#ff7070;
+    --shadow:0 24px 70px rgba(0,0,0,.45);
   }
+
   *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
   body{
     margin:0;
     min-height:100vh;
-    font-family:Inter,Segoe UI,Arial,sans-serif;
-    background:
-      radial-gradient(circle at top, rgba(255,201,40,.06), transparent 30%),
-      var(--bg);
+    font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     color:var(--text);
+    overflow-x:hidden;
+    background:
+      radial-gradient(circle at 12% 8%, rgba(101,216,255,.09), transparent 24%),
+      radial-gradient(circle at 88% 3%, rgba(167,132,255,.10), transparent 28%),
+      radial-gradient(circle at 50% 30%, rgba(255,211,106,.035), transparent 34%),
+      linear-gradient(180deg,#07090d 0%,#090c12 42%,#07090d 100%);
   }
+
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:.16;
+    background-image:
+      linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size:48px 48px;
+    mask-image:linear-gradient(to bottom, black, transparent 70%);
+  }
+
+  .ambient{
+    position:fixed;
+    border-radius:50%;
+    filter:blur(65px);
+    pointer-events:none;
+    opacity:.20;
+    z-index:-1;
+    animation:floatOrb 12s ease-in-out infinite alternate;
+  }
+  .ambient.one{width:260px;height:260px;left:-90px;top:20%;background:rgba(101,216,255,.28)}
+  .ambient.two{width:300px;height:300px;right:-110px;top:32%;background:rgba(167,132,255,.23);animation-delay:-4s}
+  .ambient.three{width:220px;height:220px;left:42%;bottom:-100px;background:rgba(255,211,106,.16);animation-delay:-7s}
+  @keyframes floatOrb{
+    from{transform:translate3d(0,-8px,0) scale(.98)}
+    to{transform:translate3d(12px,16px,0) scale(1.05)}
+  }
+
   .wrap{
-    width:min(1180px,calc(100% - 28px));
-    margin:38px auto 70px;
+    width:min(1040px,calc(100% - 28px));
+    margin:32px auto 72px;
+    position:relative;
   }
+
   .hero{
-    padding:28px 30px;
-    border:1px solid rgba(255,201,40,.28);
-    background:linear-gradient(180deg,rgba(255,201,40,.055),rgba(255,201,40,.015));
-    border-radius:16px;
-    margin-bottom:22px;
+    position:relative;
+    overflow:hidden;
+    padding:34px 34px 30px;
+    border:1px solid rgba(255,211,106,.24);
+    background:
+      linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.012)),
+      rgba(11,14,20,.88);
+    border-radius:22px;
+    box-shadow:var(--shadow);
+    margin-bottom:20px;
+    isolation:isolate;
   }
-  h1{margin:0 0 8px;font-size:32px;line-height:1.1}
-  .subtitle{color:var(--muted);font-size:15px;line-height:1.55}
-  .badge{
-    display:inline-flex;
-    margin-top:14px;
-    padding:6px 10px;
-    border:1px solid rgba(255,201,40,.35);
-    border-radius:999px;
+
+  .hero::before{
+    content:"";
+    position:absolute;
+    width:360px;
+    height:360px;
+    right:-95px;
+    top:-150px;
+    border-radius:50%;
+    background:
+      radial-gradient(circle,rgba(101,216,255,.14) 0 8%,transparent 9% 18%,rgba(167,132,255,.15) 19% 20%,transparent 21% 31%,rgba(255,211,106,.10) 32% 33%,transparent 34%);
+    animation:spin 24s linear infinite;
+    z-index:-1;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+    88%,100%{transform:translateX(120%)}
+  }
+
+  .brandline{
+    display:flex;
+    align-items:center;
+    gap:10px;
     color:var(--gold2);
     font-size:12px;
-    font-weight:700;
-    letter-spacing:.02em;
+    font-weight:800;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    margin-bottom:12px;
   }
-  .grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:18px;
+
+  .sigil{
+    width:28px;height:28px;position:relative;display:inline-grid;place-items:center;
+    filter:drop-shadow(0 0 12px rgba(101,216,255,.34));
   }
+  .sigil::before,.sigil::after{
+    content:"";position:absolute;inset:3px;border:1px solid rgba(101,216,255,.75);transform:rotate(45deg);border-radius:3px;
+  }
+  .sigil::after{
+    inset:8px;border-color:rgba(255,211,106,.8);animation:pulseSigil 2.8s ease-in-out infinite;
+  }
+  @keyframes pulseSigil{50%{transform:rotate(45deg) scale(1.18);opacity:.65}}
+
+  h1{
+    margin:0;
+    max-width:760px;
+    font-size:clamp(30px,5vw,46px);
+    line-height:1.04;
+    letter-spacing:-.035em;
+  }
+
+  .title-accent{
+    background:linear-gradient(90deg,var(--gold2),var(--gold),#ffffff);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+
+  .subtitle{
+    margin-top:13px;
+    max-width:720px;
+    color:var(--muted);
+    font-size:15px;
+    line-height:1.65;
+  }
+  }
+
   .card{
-    background:var(--panel);
+    background:linear-gradient(180deg,rgba(17,22,30,.93),rgba(12,16,22,.96));
     border:1px solid var(--border);
-    border-radius:14px;
+    border-radius:18px;
     overflow:hidden;
-    box-shadow:0 12px 35px rgba(0,0,0,.2);
+    box-shadow:0 16px 50px rgba(0,0,0,.28);
+    margin-bottom:18px;
+    backdrop-filter:blur(16px);
+    transform:translateY(0);
+    transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;
   }
+  .card:hover{
+    transform:translateY(-2px);
+    border-color:rgba(101,216,255,.25);
+    box-shadow:0 22px 58px rgba(0,0,0,.35);
+  }
+
   .cardhead{
-    padding:16px 18px;
+    padding:17px 20px;
     border-bottom:1px solid var(--border);
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap:10px;
+    gap:12px;
+    background:linear-gradient(90deg,rgba(255,211,106,.035),transparent 35%);
   }
-  .cardhead h2{font-size:17px;margin:0}
-  .pill{
+  .cardhead h2{font-size:17px;margin:0;letter-spacing:.01em}
+  .tag{
     font-size:11px;
-    color:var(--muted);
-    padding:5px 8px;
-    border:1px solid var(--border);
+    color:var(--gold2);
+    border:1px solid rgba(255,211,106,.22);
+    background:rgba(255,211,106,.05);
     border-radius:999px;
+    padding:5px 9px;
   }
-  .body{padding:18px}
+
+  .body{padding:20px}
   .inputs{
     display:grid;
     grid-template-columns:repeat(3,1fr);
     gap:12px;
   }
+
   label{
-    color:var(--muted);
+    color:#aeb9c9;
     font-size:12px;
-    display:block;
-    margin-bottom:6px;
-  }
-  input{
-    width:100%;
-    background:#080b10;
-    border:1px solid #344050;
-    color:#fff;
-    border-radius:9px;
-    font-size:18px;
     font-weight:700;
-    padding:12px 13px;
+    display:block;
+    margin-bottom:7px;
+    letter-spacing:.01em;
+  }
+
+  .field{
+    position:relative;
+  }
+
+  input[type="number"]{
+    width:100%;
+    background:linear-gradient(180deg,#0a0e14,#080b10);
+    border:1px solid #313b49;
+    color:#fff;
+    border-radius:11px;
+    font-size:18px;
+    font-weight:800;
+    padding:13px 14px;
     outline:none;
+    transition:.2s ease;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
   }
-  input:focus{
-    border-color:var(--gold);
-    box-shadow:0 0 0 3px rgba(255,201,40,.08);
+  input[type="number"]:hover{border-color:#465567}
+  input[type="number"]:focus{
+    border-color:rgba(101,216,255,.8);
+    box-shadow:0 0 0 3px rgba(101,216,255,.08),0 0 22px rgba(101,216,255,.06);
+    transform:translateY(-1px);
   }
+
   .resultbox{
-    margin-top:16px;
-    border:1px solid rgba(255,201,40,.45);
-    background:#0b0d11;
-    border-radius:10px;
-    padding:15px;
+    margin-top:17px;
+    position:relative;
+    overflow:hidden;
+    border:1px solid rgba(255,211,106,.30);
+    background:
+      radial-gradient(circle at 90% 15%,rgba(255,211,106,.08),transparent 28%),
+      #0a0d12;
+    border-radius:13px;
+    padding:17px;
   }
+  .resultbox::after{
+    content:"";
+    position:absolute;
+    left:0;right:0;bottom:0;height:2px;
+    background:linear-gradient(90deg,transparent,var(--gold),var(--cyan),transparent);
+    opacity:.7;
+  }
+
   .row{
     display:flex;
     justify-content:space-between;
     align-items:center;
     gap:14px;
-    padding:5px 0;
+    padding:6px 0;
   }
   .row span:first-child{color:#cbd5e1;font-size:14px}
-  .value{font-weight:800;font-size:18px}
-  .gold{color:var(--gold)}
-  .big{font-size:24px}
-  .compare{
-    margin:18px 0;
+  .value{font-weight:900;font-size:18px}
+  .gold{
+    background:linear-gradient(90deg,var(--gold2),var(--gold));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    filter:drop-shadow(0 0 12px rgba(255,211,106,.12));
+  }
+  .big{font-size:30px;letter-spacing:-.03em}
+
+  .togglewrap{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    padding:17px 20px;
+    background:rgba(8,11,16,.72);
+    border-top:1px solid var(--border);
+  }
+  .togglecopy strong{display:block;font-size:14px}
+  .togglecopy span{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+
+  .switch{position:relative;width:56px;height:31px;flex:0 0 auto}
+  .switch input{display:none}
+  .slider{
+    position:absolute;inset:0;cursor:pointer;background:#26303c;border-radius:999px;
+    transition:.25s;border:1px solid #3a4655;box-shadow:inset 0 1px 4px rgba(0,0,0,.35);
+  }
+  .slider:before{
+    content:"";position:absolute;width:23px;height:23px;left:3px;top:3px;background:#fff;
+    border-radius:50%;transition:.25s;box-shadow:0 3px 10px rgba(0,0,0,.35);
+  }
+  .switch input:checked + .slider{
+    background:linear-gradient(90deg,rgba(101,216,255,.28),rgba(167,132,255,.28));
+    border-color:rgba(101,216,255,.65);
+    box-shadow:0 0 18px rgba(101,216,255,.11);
+  }
+  .switch input:checked + .slider:before{
+    transform:translateX(25px);
+    background:var(--gold2);
+  }
+
+  #comparisonArea{
+    display:grid;
+    grid-template-rows:0fr;
+    opacity:0;
+    transform:translateY(-8px);
+    transition:grid-template-rows .35s ease,opacity .3s ease,transform .35s ease;
+  }
+  #comparisonArea > div{overflow:hidden}
+  #comparisonArea.show{
+    grid-template-rows:1fr;
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  .compareResult{
+    margin-top:15px;
     padding:20px;
-    background:var(--panel2);
     border:1px solid var(--border);
-    border-radius:14px;
+    border-radius:13px;
+    background:
+      radial-gradient(circle at 50% -20%,rgba(101,216,255,.10),transparent 50%),
+      #0a0e14;
     text-align:center;
   }
-  .compareTitle{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.12em}
-  .compareValue{font-size:34px;font-weight:900;margin:8px 0 4px}
+  .compareLabel{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.14em}
+  .compareValue{font-size:36px;font-weight:950;margin:8px 0 4px;letter-spacing:-.035em}
   .compareSub{font-size:13px;color:var(--muted)}
+  .good{color:var(--green);text-shadow:0 0 18px rgba(85,227,154,.15)}
+  .bad{color:var(--red);text-shadow:0 0 18px rgba(255,112,112,.14)}
+  .neutral{color:var(--text)}
+
   .section{
     margin-top:22px;
-    padding:20px;
-    background:var(--panel);
+    padding:21px;
+    background:linear-gradient(180deg,rgba(16,21,29,.90),rgba(11,15,21,.94));
     border:1px solid var(--border);
-    border-radius:14px;
+    border-radius:17px;
+    box-shadow:0 12px 36px rgba(0,0,0,.18);
   }
-  .section h3{margin:0 0 12px;font-size:18px}
+  .section h3{margin:0 0 13px;font-size:18px}
   .weights{
     display:grid;
     grid-template-columns:repeat(3,1fr);
     gap:12px;
   }
   .weight{
-    background:#0b0f14;
+    position:relative;
+    overflow:hidden;
+    background:#0a0e14;
     border:1px solid var(--border);
-    border-radius:10px;
-    padding:14px;
+    border-radius:12px;
+    padding:15px;
+    transition:.2s ease;
+  }
+  .weight:hover{transform:translateY(-2px);border-color:rgba(255,211,106,.25)}
+  .weight::after{
+    content:"";
+    position:absolute;inset:auto -20% -55% -20%;height:90px;
+    background:radial-gradient(circle,rgba(101,216,255,.12),transparent 65%);
   }
   .weight strong{display:block;font-size:20px;margin-top:5px}
   .weight small{color:var(--muted);line-height:1.45}
+
   .formula{
     margin-top:14px;
-    padding:13px 14px;
+    padding:14px 15px;
     background:#080b10;
     border:1px dashed #394656;
-    border-radius:9px;
+    border-radius:10px;
     color:#cbd5e1;
     font-family:Consolas,monospace;
     font-size:13px;
     overflow:auto;
+    white-space:pre-line;
   }
-  .note{
-    color:var(--muted);
-    font-size:12px;
-    line-height:1.55;
-    margin-top:12px;
+  .note{color:var(--muted);font-size:12px;line-height:1.6;margin-top:12px}
+
+  .footer{
+    text-align:center;
+    color:#647084;
+    font-size:11px;
+    margin-top:22px;
   }
-  .good{color:var(--green)}
-  .bad{color:var(--red)}
-  .neutral{color:var(--text)}
+
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  }
+
   @media(max-width:780px){
-    .grid{grid-template-columns:1fr}
+    .wrap{width:min(100% - 18px,1040px);margin-top:18px}
+    .hero{padding:26px 22px}
     .inputs{grid-template-columns:1fr}
     .weights{grid-template-columns:1fr}
-    h1{font-size:27px}
+    .body{padding:16px}
+    .cardhead,.togglewrap{padding-left:16px;padding-right:16px}
   }
 </style>
 </head>
 <body>
+<div class="ambient one"></div>
+<div class="ambient two"></div>
+<div class="ambient three"></div>
+
 <div class="wrap">
-  <div class="hero">
-    <h1>Ark Grid Astrogem DMG % Calculator</h1>
+  <section class="hero">
+    <div class="brandline"><span class="sigil"></span> Ark Grid Tool</div>
+    <h1>Ark Grid Astrogem <span class="title-accent">DMG % Calculator</span></h1>
     <div class="subtitle">
-      Enter the three DPS rolls from an Astrogem to estimate its Boss Damage Conversion Level and total damage increase.
-      Use the two panels to compare gems directly.
+      Enter your Astrogem DPS rolls to estimate the gem's standalone damage increase.
+      Turn on comparison only when you want to check a second Ark Grid against the first.
     </div>
-</div>
+  </section>
 
-  <div class="grid">
-    <div class="card">
-      <div class="cardhead">
-        <h2>Ark Grid A</h2><div class="pill">Current / Left</div>
+  <section class="card">
+    <div class="cardhead">
+      <h2>Ark Grid A</h2>
+      <span class="tag">Primary Grid</span>
+    </div>
+    <div class="body">
+      <div class="inputs">
+        <div class="field"><label>Atk. Power</label><input id="a_ap" type="number" value="0" min="0" step="1"></div>
+        <div class="field"><label>Boss Damage</label><input id="a_boss" type="number" value="0" min="0" step="1"></div>
+        <div class="field"><label>Additional Damage</label><input id="a_add" type="number" value="0" min="0" step="1"></div>
       </div>
-      <div class="body">
-        <div class="inputs">
-          <div><label>Atk. Power</label><input id="a_ap" type="number" value="0" min="0" step="1"></div>
-          <div><label>Boss Damage</label><input id="a_boss" type="number" value="0" min="0" step="1"></div>
-          <div><label>Additional Damage</label><input id="a_add" type="number" value="0" min="0" step="1"></div>
-        </div>
-        <div class="resultbox">
-          <div class="row"><span>Boss Damage Conversion Level</span><span id="a_level" class="value gold">—</span></div>
-          <div class="row"><span>Total DMG Increase</span><span id="a_pct" class="value gold big">—</span></div>
-        </div>
+      <div class="resultbox">
+        <div class="row"><span>Total DMG Increase</span><span id="a_pct" class="value gold big">+0.00%</span></div>
+        <div class="row"><span>Damage Score</span><span id="a_score" class="value gold">0.000</span></div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="cardhead">
-        <h2>Ark Grid B</h2><div class="pill">New / Right</div>
+    <div class="togglewrap">
+      <div class="togglecopy">
+        <strong>Compare another Ark Grid</strong>
+        <span>Optional — enable only when comparing two setups.</span>
       </div>
-      <div class="body">
-        <div class="inputs">
-          <div><label>Atk. Power</label><input id="b_ap" type="number" value="0" min="0" step="1"></div>
-          <div><label>Boss Damage</label><input id="b_boss" type="number" value="0" min="0" step="1"></div>
-          <div><label>Additional Damage</label><input id="b_add" type="number" value="0" min="0" step="1"></div>
+      <label class="switch">
+        <input id="compareToggle" type="checkbox" aria-label="Enable Ark Grid comparison">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </section>
+
+  <div id="comparisonArea">
+    <div>
+      <section class="card">
+        <div class="cardhead">
+          <h2>Ark Grid B</h2>
+          <span class="tag">Comparison Grid</span>
         </div>
-        <div class="resultbox">
-          <div class="row"><span>Boss Damage Conversion Level</span><span id="b_level" class="value gold">—</span></div>
-          <div class="row"><span>Total DMG Increase</span><span id="b_pct" class="value gold big">—</span></div>
+        <div class="body">
+          <div class="inputs">
+            <div class="field"><label>Atk. Power</label><input id="b_ap" type="number" value="0" min="0" step="1"></div>
+            <div class="field"><label>Boss Damage</label><input id="b_boss" type="number" value="0" min="0" step="1"></div>
+            <div class="field"><label>Additional Damage</label><input id="b_add" type="number" value="0" min="0" step="1"></div>
+          </div>
+          <div class="resultbox">
+            <div class="row"><span>Total DMG Increase</span><span id="b_pct" class="value gold big">+0.00%</span></div>
+            <div class="row"><span>Damage Score</span><span id="b_score" class="value gold">0.000</span></div>
+          </div>
+
+          <div class="compareResult">
+            <div class="compareLabel">Ark Grid B compared with Ark Grid A</div>
+            <div id="relative" class="compareValue neutral">0.00%</div>
+            <div id="relativeSub" class="compareSub">The two Ark Grids are equal.</div>
+          </div>
         </div>
-      </div>
+      </section>
     </div>
   </div>
 
-  <div class="compare">
-    <div class="compareTitle">Ark Grid B compared with Ark Grid A</div>
-    <div id="relative" class="compareValue">—</div>
-    <div id="relativeSub" class="compareSub">—</div>
-  </div>
-
-  <div class="section">
+  <section class="section">
     <h3>Estimated damage value per point</h3>
     <div class="weights">
       <div class="weight">
         <small>+1 Atk. Power</small>
-        <strong>≈ +0.0360%</strong>
-        <small>Equivalent to about 0.4323 Conversion Lv.</small>
+        <strong>≈ +0.0304 score</strong>
+        <small>Lowest value of the three DPS lines.</small>
       </div>
       <div class="weight">
         <small>+1 Boss Damage</small>
-        <strong>≈ +0.0967%</strong>
-        <small>Equivalent to about 1.1609 Conversion Lv.</small>
+        <strong>≈ +0.0778 score</strong>
+        <small>Highest value of the three DPS lines.</small>
       </div>
       <div class="weight">
         <small>+1 Additional Damage</small>
-        <strong>≈ +0.0726%</strong>
-        <small>Equivalent to about 0.8706 Conversion Lv.</small>
+        <strong>≈ +0.0556 score</strong>
+        <small>Sits between Boss Damage and Atk. Power.</small>
       </div>
     </div>
 
-    <div class="formula">Conversion Lv ≈ 16.7584 + (0.432328 × AP) + (1.160941 × Boss) + (0.870613 × Additional)
-Total DMG Increase % ≈ Conversion Lv ÷ 12</div>
+    <div class="formula">D = (0.03043 × Atk. Power) + (0.07782 × Boss Damage) + (0.05556 × Additional Damage)
+DMG % = (e^(D / 100) − 1) × 100</div>
 
     <div class="note">
-      Relative point value: 1 Boss Damage ≈ 2.69 Atk. Power ≈ 1.33 Additional Damage.
-      The comparison result uses multiplicative DPS comparison: (1 + Ark Grid B %) ÷ (1 + Ark Grid A %) − 1.
-      A 0 / 0 / 0 input is treated as 0.00 Conversion Lv and +0.00% DMG. LO4's temporary unloaded/default display values are not treated as real gem data.
-      This is an estimated reverse-engineered model from the screenshots, not LO4.app's official formula.
+      Damage is calculated multiplicatively in log space. Relative point value is roughly
+      1 Boss Damage ≈ 1.40 Additional Damage ≈ 2.56 Atk. Power.
+      This calculator estimates standalone Astrogem DPS value from the three DPS lines only.
     </div>
-  </div>
+  </section>
+
+  <div class="footer">Ark Grid Astrogem DMG % Calculator</div>
 </div>
 
 <script>
-const COEF = {
-  intercept: 16.758404244283213,
-  ap: 0.43232831,
-  boss: 1.16094074,
-  add: 0.87061266
-};
+const COEF = { ap: 0.03043, boss: 0.07782, add: 0.05556 };
 
 function num(id){
   const v = parseFloat(document.getElementById(id).value);
-  return Number.isFinite(v) ? v : 0;
+  return Number.isFinite(v) ? Math.max(0, v) : 0;
+}
+
+function animateValue(el){
+  el.animate(
+    [{transform:"scale(.98)",opacity:.82},{transform:"scale(1.035)",opacity:1},{transform:"scale(1)",opacity:1}],
+    {duration:220,easing:"ease-out"}
+  );
 }
 
 function calc(prefix){
@@ -287,45 +520,47 @@ function calc(prefix){
   const boss = num(prefix+"_boss");
   const add = num(prefix+"_add");
 
-  // LO4 can briefly show a placeholder/default value before its data loads.
-  // A true empty Astrogem (0 / 0 / 0) should therefore be treated as zero value.
-  const isZero = ap === 0 && boss === 0 && add === 0;
-  const level = isZero ? 0 : (COEF.intercept + COEF.ap*ap + COEF.boss*boss + COEF.add*add);
-  const pct = level / 12;
+  const D = (COEF.ap * ap) + (COEF.boss * boss) + (COEF.add * add);
+  const pct = (Math.exp(D / 100) - 1) * 100;
 
-  document.getElementById(prefix+"_level").textContent = level.toFixed(2) + " Lv";
-  document.getElementById(prefix+"_pct").textContent = "+" + pct.toFixed(2) + "%";
-  return {level, pct};
+  const pctEl = document.getElementById(prefix+"_pct");
+  const scoreEl = document.getElementById(prefix+"_score");
+  pctEl.textContent = "+" + pct.toFixed(2) + "%";
+  scoreEl.textContent = D.toFixed(3);
+  animateValue(pctEl);
+
+  return {D, pct};
 }
 
 function update(){
   const A = calc("a");
   const B = calc("b");
 
-  // Actual relative DPS change from A to B, not just percentage-point subtraction.
   const rel = ((1 + B.pct/100) / (1 + A.pct/100) - 1) * 100;
-  const levelDiff = B.level - A.level;
-  const ppDiff = B.pct - A.pct;
-
   const el = document.getElementById("relative");
   const sub = document.getElementById("relativeSub");
 
   if (Math.abs(rel) < 0.0005){
     el.textContent = "0.00%";
     el.className = "compareValue neutral";
-    sub.textContent = "The two Ark Grids are effectively equal in estimated DPS.";
+    sub.textContent = "The two Ark Grids are equal.";
   } else if (rel > 0){
     el.textContent = "+" + rel.toFixed(2) + "% DMG";
     el.className = "compareValue good";
-    sub.textContent = "Ark Grid B is stronger • +" + levelDiff.toFixed(2) + " Conversion Lv • +" + ppDiff.toFixed(2) + " percentage points";
+    sub.textContent = "Ark Grid B is stronger than Ark Grid A.";
   } else {
     el.textContent = rel.toFixed(2) + "% DMG";
     el.className = "compareValue bad";
-    sub.textContent = "Ark Grid B is weaker • " + levelDiff.toFixed(2) + " Conversion Lv • " + ppDiff.toFixed(2) + " percentage points";
+    sub.textContent = "Ark Grid B is weaker than Ark Grid A.";
   }
 }
 
-document.querySelectorAll("input").forEach(i => i.addEventListener("input", update));
+document.querySelectorAll('input[type="number"]').forEach(i => i.addEventListener("input", update));
+
+document.getElementById("compareToggle").addEventListener("change", e => {
+  document.getElementById("comparisonArea").classList.toggle("show", e.target.checked);
+});
+
 update();
 </script>
 </body>
