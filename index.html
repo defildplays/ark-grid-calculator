@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ark Grid Astrogem DMG % Calculator</title>
+<style>
+  :root{
+    --bg:#090b0f;
+    --panel:#10141a;
+    --panel2:#0d1117;
+    --border:#293241;
+    --text:#edf2f7;
+    --muted:#9aa7b5;
+    --gold:#ffc928;
+    --gold2:#ffde73;
+    --green:#49d17d;
+    --red:#ff6b6b;
+    --blue:#78b7ff;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:Inter,Segoe UI,Arial,sans-serif;
+    background:
+      radial-gradient(circle at top, rgba(255,201,40,.06), transparent 30%),
+      var(--bg);
+    color:var(--text);
+  }
+  .wrap{
+    width:min(1180px,calc(100% - 28px));
+    margin:38px auto 70px;
+  }
+  .hero{
+    padding:28px 30px;
+    border:1px solid rgba(255,201,40,.28);
+    background:linear-gradient(180deg,rgba(255,201,40,.055),rgba(255,201,40,.015));
+    border-radius:16px;
+    margin-bottom:22px;
+  }
+  h1{margin:0 0 8px;font-size:32px;line-height:1.1}
+  .subtitle{color:var(--muted);font-size:15px;line-height:1.55}
+  .badge{
+    display:inline-flex;
+    margin-top:14px;
+    padding:6px 10px;
+    border:1px solid rgba(255,201,40,.35);
+    border-radius:999px;
+    color:var(--gold2);
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.02em;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 12px 35px rgba(0,0,0,.2);
+  }
+  .cardhead{
+    padding:16px 18px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .cardhead h2{font-size:17px;margin:0}
+  .pill{
+    font-size:11px;
+    color:var(--muted);
+    padding:5px 8px;
+    border:1px solid var(--border);
+    border-radius:999px;
+  }
+  .body{padding:18px}
+  .inputs{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+  }
+  label{
+    color:var(--muted);
+    font-size:12px;
+    display:block;
+    margin-bottom:6px;
+  }
+  input{
+    width:100%;
+    background:#080b10;
+    border:1px solid #344050;
+    color:#fff;
+    border-radius:9px;
+    font-size:18px;
+    font-weight:700;
+    padding:12px 13px;
+    outline:none;
+  }
+  input:focus{
+    border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(255,201,40,.08);
+  }
+  .resultbox{
+    margin-top:16px;
+    border:1px solid rgba(255,201,40,.45);
+    background:#0b0d11;
+    border-radius:10px;
+    padding:15px;
+  }
+  .row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:14px;
+    padding:5px 0;
+  }
+  .row span:first-child{color:#cbd5e1;font-size:14px}
+  .value{font-weight:800;font-size:18px}
+  .gold{color:var(--gold)}
+  .big{font-size:24px}
+  .compare{
+    margin:18px 0;
+    padding:20px;
+    background:var(--panel2);
+    border:1px solid var(--border);
+    border-radius:14px;
+    text-align:center;
+  }
+  .compareTitle{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.12em}
+  .compareValue{font-size:34px;font-weight:900;margin:8px 0 4px}
+  .compareSub{font-size:13px;color:var(--muted)}
+  .section{
+    margin-top:22px;
+    padding:20px;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:14px;
+  }
+  .section h3{margin:0 0 12px;font-size:18px}
+  .weights{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+  }
+  .weight{
+    background:#0b0f14;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:14px;
+  }
+  .weight strong{display:block;font-size:20px;margin-top:5px}
+  .weight small{color:var(--muted);line-height:1.45}
+  .formula{
+    margin-top:14px;
+    padding:13px 14px;
+    background:#080b10;
+    border:1px dashed #394656;
+    border-radius:9px;
+    color:#cbd5e1;
+    font-family:Consolas,monospace;
+    font-size:13px;
+    overflow:auto;
+  }
+  .note{
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.55;
+    margin-top:12px;
+  }
+  .good{color:var(--green)}
+  .bad{color:var(--red)}
+  .neutral{color:var(--text)}
+  @media(max-width:780px){
+    .grid{grid-template-columns:1fr}
+    .inputs{grid-template-columns:1fr}
+    .weights{grid-template-columns:1fr}
+    h1{font-size:27px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <h1>Ark Grid Astrogem DMG % Calculator</h1>
+    <div class="subtitle">
+      Enter the three DPS rolls from an Astrogem to estimate its Boss Damage Conversion Level and total damage increase.
+      Use the two panels to compare gems directly.
+    </div>
+</div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="cardhead">
+        <h2>Ark Grid A</h2><div class="pill">Current / Left</div>
+      </div>
+      <div class="body">
+        <div class="inputs">
+          <div><label>Atk. Power</label><input id="a_ap" type="number" value="0" min="0" step="1"></div>
+          <div><label>Boss Damage</label><input id="a_boss" type="number" value="0" min="0" step="1"></div>
+          <div><label>Additional Damage</label><input id="a_add" type="number" value="0" min="0" step="1"></div>
+        </div>
+        <div class="resultbox">
+          <div class="row"><span>Boss Damage Conversion Level</span><span id="a_level" class="value gold">—</span></div>
+          <div class="row"><span>Total DMG Increase</span><span id="a_pct" class="value gold big">—</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cardhead">
+        <h2>Ark Grid B</h2><div class="pill">New / Right</div>
+      </div>
+      <div class="body">
+        <div class="inputs">
+          <div><label>Atk. Power</label><input id="b_ap" type="number" value="0" min="0" step="1"></div>
+          <div><label>Boss Damage</label><input id="b_boss" type="number" value="0" min="0" step="1"></div>
+          <div><label>Additional Damage</label><input id="b_add" type="number" value="0" min="0" step="1"></div>
+        </div>
+        <div class="resultbox">
+          <div class="row"><span>Boss Damage Conversion Level</span><span id="b_level" class="value gold">—</span></div>
+          <div class="row"><span>Total DMG Increase</span><span id="b_pct" class="value gold big">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare">
+    <div class="compareTitle">Ark Grid B compared with Ark Grid A</div>
+    <div id="relative" class="compareValue">—</div>
+    <div id="relativeSub" class="compareSub">—</div>
+  </div>
+
+  <div class="section">
+    <h3>Estimated damage value per point</h3>
+    <div class="weights">
+      <div class="weight">
+        <small>+1 Atk. Power</small>
+        <strong>≈ +0.0360%</strong>
+        <small>Equivalent to about 0.4323 Conversion Lv.</small>
+      </div>
+      <div class="weight">
+        <small>+1 Boss Damage</small>
+        <strong>≈ +0.0967%</strong>
+        <small>Equivalent to about 1.1609 Conversion Lv.</small>
+      </div>
+      <div class="weight">
+        <small>+1 Additional Damage</small>
+        <strong>≈ +0.0726%</strong>
+        <small>Equivalent to about 0.8706 Conversion Lv.</small>
+      </div>
+    </div>
+
+    <div class="formula">Conversion Lv ≈ 16.7584 + (0.432328 × AP) + (1.160941 × Boss) + (0.870613 × Additional)
+Total DMG Increase % ≈ Conversion Lv ÷ 12</div>
+
+    <div class="note">
+      Relative point value: 1 Boss Damage ≈ 2.69 Atk. Power ≈ 1.33 Additional Damage.
+      The comparison result uses multiplicative DPS comparison: (1 + Gem B %) ÷ (1 + Gem A %) − 1.
+      This is an estimated reverse-engineered model from the screenshots, not LO4.app's official formula.
+    </div>
+  </div>
+</div>
+
+<script>
+const COEF = {
+  intercept: 16.758404244283213,
+  ap: 0.43232831,
+  boss: 1.16094074,
+  add: 0.87061266
+};
+
+function num(id){
+  const v = parseFloat(document.getElementById(id).value);
+  return Number.isFinite(v) ? v : 0;
+}
+
+function calc(prefix){
+  const ap = num(prefix+"_ap");
+  const boss = num(prefix+"_boss");
+  const add = num(prefix+"_add");
+
+  const level = COEF.intercept + COEF.ap*ap + COEF.boss*boss + COEF.add*add;
+  const pct = level / 12;
+
+  document.getElementById(prefix+"_level").textContent = level.toFixed(2) + " Lv";
+  document.getElementById(prefix+"_pct").textContent = "+" + pct.toFixed(2) + "%";
+  return {level, pct};
+}
+
+function update(){
+  const A = calc("a");
+  const B = calc("b");
+
+  // Actual relative DPS change from A to B, not just percentage-point subtraction.
+  const rel = ((1 + B.pct/100) / (1 + A.pct/100) - 1) * 100;
+  const levelDiff = B.level - A.level;
+  const ppDiff = B.pct - A.pct;
+
+  const el = document.getElementById("relative");
+  const sub = document.getElementById("relativeSub");
+
+  if (Math.abs(rel) < 0.0005){
+    el.textContent = "0.00%";
+    el.className = "compareValue neutral";
+    sub.textContent = "The two Ark Grids are effectively equal in estimated DPS.";
+  } else if (rel > 0){
+    el.textContent = "+" + rel.toFixed(2) + "% DMG";
+    el.className = "compareValue good";
+    sub.textContent = "Ark Grid B is stronger • +" + levelDiff.toFixed(2) + " Conversion Lv • +" + ppDiff.toFixed(2) + " percentage points";
+  } else {
+    el.textContent = rel.toFixed(2) + "% DMG";
+    el.className = "compareValue bad";
+    sub.textContent = "Ark Grid B is weaker • " + levelDiff.toFixed(2) + " Conversion Lv • " + ppDiff.toFixed(2) + " percentage points";
+  }
+}
+
+document.querySelectorAll("input").forEach(i => i.addEventListener("input", update));
+update();
+</script>
+</body>
+</html>
