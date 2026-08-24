@@ -49,21 +49,6 @@
     background-size:48px 48px;
     mask-image:linear-gradient(to bottom, black, transparent 70%);
   }
-
-  .ambient{
-    position:fixed;
-    border-radius:50%;
-    filter:blur(65px);
-    pointer-events:none;
-    opacity:.20;
-    z-index:-1;
-    animation:floatOrb 12s ease-in-out infinite alternate;
-  }
-  .ambient.one{width:260px;height:260px;left:-90px;top:20%;background:rgba(101,216,255,.28)}
-  .ambient.two{width:300px;height:300px;right:-110px;top:32%;background:rgba(167,132,255,.23);animation-delay:-4s}
-  .ambient.three{width:220px;height:220px;left:42%;bottom:-100px;background:rgba(255,211,106,.16);animation-delay:-7s}
-  @keyframes floatOrb{
-    from{transform:translate3d(0,-8px,0) scale(.98)}
     to{transform:translate3d(12px,16px,0) scale(1.05)}
   }
 
@@ -82,25 +67,22 @@
       linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.012)),
       rgba(11,14,20,.88);
     border-radius:22px;
-    box-shadow:var(--shadow);
+    box-shadow:0 12px 34px rgba(0,0,0,.28);
     margin-bottom:20px;
     isolation:isolate;
   }
-
   .hero::before{
     content:"";
     position:absolute;
-    width:360px;
-    height:360px;
-    right:-95px;
+    width:320px;
+    height:320px;
+    right:-110px;
     top:-150px;
     border-radius:50%;
-    background:
-      radial-gradient(circle,rgba(101,216,255,.14) 0 8%,transparent 9% 18%,rgba(167,132,255,.15) 19% 20%,transparent 21% 31%,rgba(255,211,106,.10) 32% 33%,transparent 34%);
-    animation:spin 24s linear infinite;
+    background:radial-gradient(circle,rgba(101,216,255,.10),rgba(167,132,255,.05) 35%,transparent 68%);
     z-index:-1;
+    pointer-events:none;
   }
-  @keyframes spin{to{transform:rotate(360deg)}}
     88%,100%{transform:translateX(120%)}
   }
 
@@ -118,15 +100,14 @@
 
   .sigil{
     width:28px;height:28px;position:relative;display:inline-grid;place-items:center;
-    filter:drop-shadow(0 0 12px rgba(101,216,255,.34));
   }
   .sigil::before,.sigil::after{
     content:"";position:absolute;inset:3px;border:1px solid rgba(101,216,255,.75);transform:rotate(45deg);border-radius:3px;
   }
   .sigil::after{
-    inset:8px;border-color:rgba(255,211,106,.8);animation:pulseSigil 2.8s ease-in-out infinite;
+    inset:8px;border-color:rgba(255,211,106,.8);
   }
-  @keyframes pulseSigil{50%{transform:rotate(45deg) scale(1.18);opacity:.65}}
+}
 
   h1{
     margin:0;
@@ -153,20 +134,17 @@
   }
 
   .card{
-    background:linear-gradient(180deg,rgba(17,22,30,.93),rgba(12,16,22,.96));
+    contain:paint;
+    background:linear-gradient(180deg,rgba(17,22,30,.97),rgba(12,16,22,.98));
     border:1px solid var(--border);
     border-radius:18px;
     overflow:hidden;
-    box-shadow:0 16px 50px rgba(0,0,0,.28);
+    box-shadow:0 10px 28px rgba(0,0,0,.24);
     margin-bottom:18px;
-    backdrop-filter:blur(16px);
-    transform:translateY(0);
-    transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;
+    transition:border-color .18s ease;
   }
   .card:hover{
-    transform:translateY(-2px);
     border-color:rgba(101,216,255,.25);
-    box-shadow:0 22px 58px rgba(0,0,0,.35);
   }
 
   .cardhead{
@@ -225,7 +203,6 @@
   input[type="number"]:focus{
     border-color:rgba(101,216,255,.8);
     box-shadow:0 0 0 3px rgba(101,216,255,.08),0 0 22px rgba(101,216,255,.06);
-    transform:translateY(-1px);
   }
 
   .resultbox{
@@ -261,7 +238,6 @@
     -webkit-background-clip:text;
     background-clip:text;
     color:transparent;
-    filter:drop-shadow(0 0 12px rgba(255,211,106,.12));
   }
   .big{font-size:30px;letter-spacing:-.03em}
 
@@ -329,6 +305,7 @@
   .neutral{color:var(--text)}
 
   .section{
+    contain:paint;
     margin-top:22px;
     padding:21px;
     background:linear-gradient(180deg,rgba(16,21,29,.90),rgba(11,15,21,.94));
@@ -351,7 +328,7 @@
     padding:15px;
     transition:.2s ease;
   }
-  .weight:hover{transform:translateY(-2px);border-color:rgba(255,211,106,.25)}
+  .weight:hover{border-color:rgba(255,211,106,.25)}
   .weight::after{
     content:"";
     position:absolute;inset:auto -20% -55% -20%;height:90px;
@@ -381,6 +358,11 @@
     margin-top:22px;
   }
 
+
+  @supports (content-visibility:auto){
+    .section{content-visibility:auto;contain-intrinsic-size:500px;}
+  }
+
   @media (prefers-reduced-motion: reduce){
     *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
   }
@@ -396,10 +378,6 @@
 </style>
 </head>
 <body>
-<div class="ambient one"></div>
-<div class="ambient two"></div>
-<div class="ambient three"></div>
-
 <div class="wrap">
   <section class="hero">
     <div class="brandline"><span class="sigil"></span> Ark Grid Tool</div>
@@ -527,7 +505,6 @@ function calc(prefix){
   const scoreEl = document.getElementById(prefix+"_score");
   pctEl.textContent = "+" + pct.toFixed(2) + "%";
   scoreEl.textContent = D.toFixed(3);
-  animateValue(pctEl);
 
   return {D, pct};
 }
