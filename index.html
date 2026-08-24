@@ -262,7 +262,8 @@ Total DMG Increase % ≈ Conversion Lv ÷ 12</div>
 
     <div class="note">
       Relative point value: 1 Boss Damage ≈ 2.69 Atk. Power ≈ 1.33 Additional Damage.
-      The comparison result uses multiplicative DPS comparison: (1 + Gem B %) ÷ (1 + Gem A %) − 1.
+      The comparison result uses multiplicative DPS comparison: (1 + Ark Grid B %) ÷ (1 + Ark Grid A %) − 1.
+      A 0 / 0 / 0 input is treated as 0.00 Conversion Lv and +0.00% DMG. LO4's temporary unloaded/default display values are not treated as real gem data.
       This is an estimated reverse-engineered model from the screenshots, not LO4.app's official formula.
     </div>
   </div>
@@ -286,7 +287,10 @@ function calc(prefix){
   const boss = num(prefix+"_boss");
   const add = num(prefix+"_add");
 
-  const level = COEF.intercept + COEF.ap*ap + COEF.boss*boss + COEF.add*add;
+  // LO4 can briefly show a placeholder/default value before its data loads.
+  // A true empty Astrogem (0 / 0 / 0) should therefore be treated as zero value.
+  const isZero = ap === 0 && boss === 0 && add === 0;
+  const level = isZero ? 0 : (COEF.intercept + COEF.ap*ap + COEF.boss*boss + COEF.add*add);
   const pct = level / 12;
 
   document.getElementById(prefix+"_level").textContent = level.toFixed(2) + " Lv";
