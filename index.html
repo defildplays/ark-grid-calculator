@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#090b10">
-<title>Ark Grid Astrogem DMG % Calculator</title>
+<title>Ark Grid DPS% Calculator</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
 <style>
 :root{--bg:#07090d;--panel:#10151d;--panel2:#0b0f15;--border:rgba(154,176,210,.16);--text:#f5f7fb;--muted:#96a2b5;--gold:#ffd36a;--gold2:#fff0b7;--cyan:#65d8ff;--green:#55e39a;--red:#ff7070}
 *{box-sizing:border-box} html,body{margin:0;padding:0}
@@ -13,7 +15,7 @@ body{min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Bl
 .hero{position:relative;overflow:hidden;padding:34px;border:1px solid rgba(255,211,106,.24);border-radius:22px;background:linear-gradient(135deg,rgba(255,255,255,.035),rgba(255,255,255,.01)),#0b0e14;box-shadow:0 12px 32px rgba(0,0,0,.26);margin-bottom:20px}
 .hero::before{content:"";position:absolute;width:280px;height:280px;top:-150px;right:-80px;border-radius:50%;background:radial-gradient(circle,rgba(101,216,255,.10),rgba(167,132,255,.04) 40%,transparent 70%);pointer-events:none}
 .brandline{display:flex;align-items:center;gap:10px;color:var(--gold2);font-size:12px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;margin-bottom:12px}
-.sigil{width:26px;height:26px;position:relative;display:inline-block} .sigil::before,.sigil::after{content:"";position:absolute;border:1px solid rgba(101,216,255,.75);transform:rotate(45deg);border-radius:3px} .sigil::before{inset:3px} .sigil::after{inset:8px;border-color:rgba(255,211,106,.8)}
+.brand-icon{width:34px;height:34px;object-fit:contain;display:block;flex:0 0 auto}.sigil{width:26px;height:26px;position:relative;display:inline-block} .sigil::before,.sigil::after{content:"";position:absolute;border:1px solid rgba(101,216,255,.75);transform:rotate(45deg);border-radius:3px} .sigil::before{inset:3px} .sigil::after{inset:8px;border-color:rgba(255,211,106,.8)}
 h1{margin:0;max-width:780px;font-size:clamp(30px,5vw,46px);line-height:1.04;letter-spacing:-.035em}
 .title-accent{background:linear-gradient(90deg,var(--gold2),var(--gold),#fff);-webkit-background-clip:text;background-clip:text;color:transparent}
 .subtitle{margin-top:13px;max-width:790px;color:var(--muted);font-size:15px;line-height:1.65}
@@ -45,14 +47,57 @@ input[type=number]:focus{border-color:rgba(101,216,255,.8);box-shadow:0 0 0 3px 
 .recommend{margin-top:14px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px} .rec{border:1px solid var(--border);background:#0b1016;border-radius:10px;padding:12px} .rec small{color:var(--muted)} .rec strong{display:block;margin-top:4px;font-size:18px}
 .footer{text-align:center;color:#647084;font-size:11px;margin-top:22px}
 @media(max-width:780px){.wrap{width:min(100% - 18px,1040px);margin-top:18px} .hero{padding:26px 22px} .inputs,.weights,.rules,.stats4,.recommend{grid-template-columns:1fr} .planner-grid{grid-template-columns:1fr} .body{padding:16px} .cardhead,.togglewrap{padding-left:16px;padding-right:16px} .row{align-items:flex-start} .big{font-size:26px}}
+
+.creator-strip{
+  margin-top:18px;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:9px 12px;
+  border:1px solid rgba(145,70,255,.28);
+  background:rgba(145,70,255,.07);
+  border-radius:999px;
+  color:#d9c8ff;
+  font-size:12px;
+  font-weight:700;
+}
+.creator-strip a{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  color:#efe7ff;
+  text-decoration:none;
+  transition:color .15s ease,transform .15s ease;
+}
+.creator-strip a:hover{
+  color:#ffffff;
+  transform:translateY(-1px);
+}
+.twitch-icon{
+  width:18px;
+  height:18px;
+  display:block;
+  flex:0 0 auto;
+}
+
 </style>
 </head>
 <body>
 <div class="wrap">
 <section class="hero">
-  <div class="brandline"><span class="sigil"></span> Ark Grid Tool</div>
-  <h1>Ark Grid Astrogem <span class="title-accent">DMG % Calculator</span></h1>
+  <div class="brandline"><img class="brand-icon" src="favicon.png" alt=""> Ark Grid Tool</div>
+  <h1>Ark Grid <span class="title-accent">DPS% Calculator</span></h1>
   <div class="subtitle">Calculates total Ark Grid DPS increase from Atk. Power, Boss Damage, and Additional Damage Astrogem points. The legality check applies 6 main cores, up to 4 Astrogems per core, and a maximum of 17 Willpower on each core.</div>
+
+    <div class="creator-strip">
+      <a href="https://www.twitch.tv/imdefild" target="_blank" rel="noopener noreferrer" aria-label="ImDefild on Twitch">
+        <svg class="twitch-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M4.265 2 3 5.236V19h4.5V22H10l3-3h3.5L21 14.5V2H4.265Zm15.235 11.75L17 16.25h-4l-3 3v-3H6V4.5h13.5v9.25ZM16.5 7H15v5h1.5V7Zm-4 0H11v5h1.5V7Z"/>
+        </svg>
+        <span>Made by ImDefild</span>
+      </a>
+    </div>
+
 </section>
 
 <section class="card">
@@ -193,7 +238,7 @@ Total DMG % = ((1.0289 × e^(D / 100)) − 1) × 100</div>
 </div>
 </section>
 
-<div class="footer">Ark Grid Astrogem DMG % Calculator</div>
+<div class="footer">Ark Grid DPS% Calculator</div>
 </div>
 
 <script>
