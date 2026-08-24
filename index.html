@@ -52,7 +52,7 @@ input[type=number]:focus{border-color:rgba(101,216,255,.8);box-shadow:0 0 0 3px 
 <section class="hero">
   <div class="brandline"><span class="sigil"></span> Ark Grid Tool</div>
   <h1>Ark Grid Astrogem <span class="title-accent">DMG % Calculator</span></h1>
-  <div class="subtitle">Enter your total Astrogem DPS points to estimate your real Ark Grid damage increase. The calculator checks all 6 main cores separately: each core can equip up to 4 Astrogems and has its own 17 Willpower limit. Across all 6 cores that is up to 24 Astrogems and 102 total Willpower, but the 17-point limit is enforced per core.</div>
+  <div class="subtitle">Calculates total Ark Grid DPS increase from Atk. Power, Boss Damage, and Additional Damage Astrogem points. The legality check applies 6 main cores, up to 4 Astrogems per core, and a maximum of 17 Willpower on each core.</div>
 </section>
 
 <section class="card">
@@ -78,7 +78,7 @@ input[type=number]:focus{border-color:rgba(101,216,255,.8);box-shadow:0 0 0 3px 
   </div>
 
   <div class="togglewrap">
-    <div class="togglecopy"><strong>Target Damage Planner</strong><span>Choose a target total DPS increase and see the best-case minimum extra stat points needed.</span></div>
+    <div class="togglecopy"><strong>Target Damage Planner</strong><span>Calculates the minimum additional stat points required to reach a selected total DPS target.</span></div>
     <label class="switch"><input id="plannerToggle" type="checkbox"><span class="slider"></span></label>
   </div>
 
@@ -91,7 +91,7 @@ input[type=number]:focus{border-color:rgba(101,216,255,.8);box-shadow:0 0 0 3px 
       <div class="plannerResult">
         <div class="compareLabel">Target Result</div>
         <div id="need_points" class="compareValue neutral">—</div>
-        <div id="plan_sub" class="compareSub">Choose a target and calculate.</div>
+        <div id="plan_sub" class="compareSub">Enter a target total DPS increase.</div>
         <div class="recommend">
           <div class="rec"><small>Add Atk. Power</small><strong id="rec_ap">—</strong></div>
           <div class="rec"><small>Add Boss Damage</small><strong id="rec_boss">—</strong></div>
@@ -102,7 +102,7 @@ input[type=number]:focus{border-color:rgba(101,216,255,.8);box-shadow:0 0 0 3px 
   </div>
 
   <div class="togglewrap">
-    <div class="togglecopy"><strong>Compare another Ark Grid</strong><span>Optional — compare Ark Grid B directly against Ark Grid A.</span></div>
+    <div class="togglecopy"><strong>Compare another Ark Grid</strong><span>Displays the relative DPS difference between Ark Grid A and Ark Grid B.</span></div>
     <label class="switch"><input id="compareToggle" type="checkbox"><span class="slider"></span></label>
   </div>
 </section>
@@ -136,28 +136,18 @@ input[type=number]:focus{border-color:rgba(101,216,255,.8);box-shadow:0 0 0 3px 
 <div class="rules">
   <div class="rule"><small>Maximum Astrogems</small><strong>24</strong><small>6 main cores × up to 4 Astrogems.</small></div>
   <div class="rule"><small>Maximum Effect Points</small><strong>240</strong><small>24 perfect 5/5 Astrogems × 10 total effect points each.</small></div>
-  <div class="rule"><small>Theoretical Max Total DMG</small><strong>+18.62%</strong><small>This is the real calculated DPS increase, not a 100% score.</small></div>
+  <div class="rule"><small>Theoretical Max Total DMG</small><strong>+18.62%</strong><small>Maximum calculated Total DMG Increase under the legal Ark Grid limits.</small></div>
 </div>
 <div class="note">
-  I rechecked every legal per-main-core combination of 0–4 Astrogems at 17 Willpower or less.
-  The maximum-DPS perfect setup per main core is <strong>1× 3-Willpower + 1× 4-Willpower + 2× 5-Willpower</strong> = exactly 17 Willpower. Repeating that on all 6 main cores uses <strong>24 Astrogems and 102 total Willpower</strong>.
-  Across all 6 main cores that gives <strong>60 Atk. Power, 90 Boss Damage and 90 Additional Damage</strong> = 240 total effect points.
-  With the current damage formula, that equals <strong>+18.62% actual total DPS</strong>.
+  The theoretical maximum uses the highest-damage legal 17-Willpower setup on each of the 6 main cores.
+  Per main core, the optimal perfect combination is <strong>1× 3-Willpower Astrogem, 1× 4-Willpower Astrogem, and 2× 5-Willpower Astrogems</strong>, using exactly 17 Willpower.
+  Across all 6 main cores, this results in <strong>60 Atk. Power, 90 Boss Damage, and 90 Additional Damage</strong>, for <strong>240 total Astrogem effect points</strong>.
+  Using the calculator's damage formula, this produces a maximum of <strong>+18.62% Total DMG Increase</strong>.
 </div>
 </section>
 
 <section class="section">
-<h3>Astrogem & Willpower Rules</h3>
-<div class="rules">
-  <div class="rule"><small>3 Willpower Astrogem</small><strong>Atk. + Additional</strong><small>Up to 5 Atk. Power and 5 Additional Damage.</small></div>
-  <div class="rule"><small>4 Willpower Astrogem</small><strong>Atk. + Boss</strong><small>Up to 5 Atk. Power and 5 Boss Damage.</small></div>
-  <div class="rule"><small>5 Willpower Astrogem</small><strong>Additional + Boss</strong><small>Up to 5 Additional Damage and 5 Boss Damage.</small></div>
-</div>
-<div class="note">Each Astrogem has 2 effect rolls and each roll can reach 5 points, so a perfect Astrogem is 5/5 = 10 total effect points. Each main core can equip up to 4 Astrogems and has at most 17 Willpower. With 6 main cores, the full grid can use up to 24 Astrogems and 102 total Willpower, but no individual core may exceed 17. If an aggregate stat combination cannot exist under those limits, the calculator marks it as impossible instead of displaying an inflated DPS result.</div>
-</section>
-
-<section class="section">
-<h3>Estimated damage value per point</h3>
+<h3>Damage Value per Point</h3>
 <div class="weights">
   <div class="weight"><small>+1 Atk. Power</small><strong>≈ +0.02637 score</strong><small>Lowest value of the three DPS lines.</small></div>
   <div class="weight"><small>+1 Boss Damage</small><strong>≈ +0.08082 score</strong><small>Highest value of the three DPS lines.</small></div>
@@ -165,17 +155,13 @@ input[type=number]:focus{border-color:rgba(101,216,255,.8);box-shadow:0 0 0 3px 
 </div>
 <div class="formula">D = (0.02637 × Atk. Power) + (0.08082 × Boss Damage) + (0.05971 × Additional Damage)
 Total DMG % = ((1.0289 × e^(D / 100)) − 1) × 100</div>
-<div class="note">The fixed +2.89% Ark Grid baseline is applied first, then the Astrogem DPS effect is applied multiplicatively. Relative point value is roughly 1 Boss Damage ≈ 1.35 Additional Damage ≈ 3.07 Atk. Power.</div>
+<div class="note">The displayed Total DMG Increase includes the fixed +2.89% Ark Grid baseline. Astrogem damage is then applied multiplicatively. Relative point value: 1 Boss Damage ≈ 1.35 Additional Damage ≈ 3.07 Atk. Power.</div>
 </section>
 
 <section class="section">
 <h3>Damage & Grade</h3>
 <div class="note">
-  Every large percentage shown by the calculator is an <strong>actual total DPS increase</strong>.
-  Grades are tuned around realistic Ark Grid progression rather than equal chunks of the theoretical maximum.
-  A low-level or early Ark Grid around <strong>4–5% total damage</strong> is already in the <strong>B tier range</strong>, while S and SS grades remain difficult to reach.
-  <br><br>
-  Each main grade now has <strong>−, normal, and +</strong> versions:
+  Grades are assigned from the calculated <strong>Total DMG Increase</strong>. The +2.89% base grid increase is included in the displayed damage percentage.
   <br><br>
   <strong>SS+</strong> +18.25% and above •
   <strong>SS</strong> +17.90%–18.24% •
@@ -201,9 +187,9 @@ Total DMG % = ((1.0289 × e^(D / 100)) − 1) × 100</div>
   <strong>D</strong> +3.10%–3.29% •
   <strong>D−</strong> above +2.89% up to +3.09%
   <br>
-  <strong>F</strong> = the empty/base +2.89% grid.
+  <strong>F</strong> = +2.89% base grid only.
   <br><br>
-  <strong>SS+</strong> is effectively perfect or extremely close to the +18.62% theoretical maximum. A grades are already strong developed grids, while the B range is meant to cover typical lower-level and developing Ark Grids.
+  The theoretical maximum under the current Ark Grid limits and damage formula is <strong>+18.62% Total DMG Increase</strong>.
 </div>
 </section>
 
@@ -299,7 +285,7 @@ function calc(prefix){
   const possible=layouts.length>0&&ap+boss+add<=240;
 
   if(!possible){
-    warning.textContent="Impossible Ark Grid point combination under the 24-Astrogem / 17-Willpower-per-main-core limits.";
+    warning.textContent="This point combination exceeds the legal 24-Astrogem / 17-Willpower-per-main-core limits.";
     warning.classList.add("show");
     document.getElementById(prefix+"_pct").textContent="Impossible";
     document.getElementById(prefix+"_score").textContent="—";
@@ -328,7 +314,7 @@ function calc(prefix){
 function updateComparison(){
   const A=calc("a"),B=calc("b");
   const el=document.getElementById("relative"),sub=document.getElementById("relativeSub");
-  if(!A.possible||!B.possible){el.textContent="—";el.className="compareValue neutral";sub.textContent="Enter two possible Ark Grid point combinations.";return}
+  if(!A.possible||!B.possible){el.textContent="—";el.className="compareValue neutral";sub.textContent="Both Ark Grid inputs must be legal point combinations.";return}
   const rel=((1+B.pct/100)/(1+A.pct/100)-1)*100;
   if(Math.abs(rel)<.0005){el.textContent="0.00%";el.className="compareValue neutral";sub.textContent="The two Ark Grids are equal."}
   else if(rel>0){el.textContent="+"+rel.toFixed(2)+"% DMG";el.className="compareValue good";sub.textContent="Ark Grid B is stronger than Ark Grid A."}
@@ -339,7 +325,7 @@ function planTarget(){
   const A=calc("a");
   const need=document.getElementById("need_points"),sub=document.getElementById("plan_sub");
   const rap=document.getElementById("rec_ap"),rb=document.getElementById("rec_boss"),ra=document.getElementById("rec_add");
-  if(!A.possible){need.textContent="—";sub.textContent="Ark Grid A is not a possible layout.";rap.textContent=rb.textContent=ra.textContent="—";return}
+  if(!A.possible){need.textContent="—";sub.textContent="Ark Grid A exceeds the legal layout limits.";rap.textContent=rb.textContent=ra.textContent="—";return}
 
   let target=parseFloat(document.getElementById("target_pct").value);
   if(!Number.isFinite(target))target=A.pct;
@@ -348,7 +334,7 @@ function planTarget(){
 
   if(target<=A.pct+1e-9){
     need.textContent="0 points";need.className="compareValue good";
-    sub.textContent=`Current total damage is already +${A.pct.toFixed(2)}%, meeting the +${target.toFixed(2)}% target.`;
+    sub.textContent=`Current total damage is +${A.pct.toFixed(2)}%, which meets the +${target.toFixed(2)}% target.`;
     rap.textContent=rb.textContent=ra.textContent="+0";return;
   }
 
@@ -383,7 +369,7 @@ function planTarget(){
 
   const finalPct=totalDmgFromD(A.D+best.gain);
   need.textContent=best.n+" points";need.className="compareValue good";
-  sub.textContent=`Best-case minimum extra effect points to reach at least +${target.toFixed(2)}% total DMG. Recommended result: +${finalPct.toFixed(2)}%.`;
+  sub.textContent=`Minimum additional effect points required to reach at least +${target.toFixed(2)}% total DMG. Result: +${finalPct.toFixed(2)}%.`;
   rap.textContent="+"+best.ap;rb.textContent="+"+best.boss;ra.textContent="+"+best.add;
 }
 
