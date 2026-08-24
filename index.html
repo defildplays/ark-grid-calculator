@@ -356,7 +356,7 @@
     <div class="brandline"><span class="sigil"></span> Ark Grid Tool</div>
     <h1>Ark Grid Astrogem <span class="title-accent">DMG % Calculator</span></h1>
     <div class="subtitle">
-      Enter your Astrogem DPS rolls to estimate the gem's standalone damage increase.
+      Enter your Astrogem DPS rolls to estimate the total Ark Grid damage increase, including the fixed +2.89% baseline.
       Turn on comparison only when you want to check a second Ark Grid against the first.
     </div>
   </section>
@@ -425,29 +425,29 @@
     <div class="weights">
       <div class="weight">
         <small>+1 Atk. Power</small>
-        <strong>≈ +0.0304 score</strong>
+        <strong>≈ +0.0264 score</strong>
         <small>Lowest value of the three DPS lines.</small>
       </div>
       <div class="weight">
         <small>+1 Boss Damage</small>
-        <strong>≈ +0.0778 score</strong>
+        <strong>≈ +0.0808 score</strong>
         <small>Highest value of the three DPS lines.</small>
       </div>
       <div class="weight">
         <small>+1 Additional Damage</small>
-        <strong>≈ +0.0556 score</strong>
+        <strong>≈ +0.0597 score</strong>
         <small>Sits between Boss Damage and Atk. Power.</small>
       </div>
     </div>
 
-    <div class="formula">D = (0.03043 × Atk. Power) + (0.07782 × Boss Damage) + (0.05556 × Additional Damage)
-Gem DMG % = (e^(D / 100) − 1) × 100
-Total DMG % = 2.89 + Gem DMG %</div>
+    <div class="formula">D = (0.02637 × Atk. Power) + (0.08082 × Boss Damage) + (0.05971 × Additional Damage)
+Total DMG % = ((1.0289 × e^(D / 100)) − 1) × 100</div>
 
     <div class="note">
-      Damage is calculated multiplicatively in log space. Relative point value is roughly
-      1 Boss Damage ≈ 1.40 Additional Damage ≈ 2.56 Atk. Power.
-      A fixed +2.89% base increase is included in Total DMG Increase, with the Astrogem DPS value added on top.
+      This calculator includes a fixed +2.89% Ark Grid baseline, then applies the Astrogem DPS lines multiplicatively.
+      The recalibrated DPS weights are 0.02637 per Atk. Power, 0.08082 per Boss Damage, and 0.05971 per Additional Damage.
+      Relative point value is roughly 1 Boss Damage ≈ 1.35 Additional Damage ≈ 3.07 Atk. Power.
+      This model was recalibrated against the LO4.app examples you provided and is intended to track LO4 more closely than the previous version.
     </div>
   </section>
 
@@ -455,7 +455,7 @@ Total DMG % = 2.89 + Gem DMG %</div>
 </div>
 
 <script>
-const COEF = { ap: 0.03043, boss: 0.07782, add: 0.05556 };
+const COEF = { ap: 0.02637, boss: 0.08082, add: 0.05971 };
 const BASE_DMG = 2.89;
 
 function num(id){
@@ -469,8 +469,7 @@ function calc(prefix){
   const add = num(prefix+"_add");
 
   const D = (COEF.ap * ap) + (COEF.boss * boss) + (COEF.add * add);
-  const gemPct = (Math.exp(D / 100) - 1) * 100;
-  const pct = BASE_DMG + gemPct;
+  const pct = (((1 + BASE_DMG / 100) * Math.exp(D / 100)) - 1) * 100;
 
   document.getElementById(prefix+"_pct").textContent = "+" + pct.toFixed(2) + "%";
   document.getElementById(prefix+"_score").textContent = D.toFixed(3);
