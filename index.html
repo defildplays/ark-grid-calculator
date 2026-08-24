@@ -374,7 +374,8 @@
       </div>
 
       <div class="resultbox">
-        <div class="row"><span>Total DMG Increase</span><span id="a_pct" class="value gold big">+0.00%</span></div>
+        <div class="row"><span>Base Grid Increase</span><span class="value">+2.89%</span></div>
+        <div class="row"><span>Total DMG Increase</span><span id="a_pct" class="value gold big">+2.89%</span></div>
         <div class="row"><span>Damage Score</span><span id="a_score" class="value gold">0.000</span></div>
       </div>
     </div>
@@ -405,7 +406,8 @@
         </div>
 
         <div class="resultbox">
-          <div class="row"><span>Total DMG Increase</span><span id="b_pct" class="value gold big">+0.00%</span></div>
+          <div class="row"><span>Base Grid Increase</span><span class="value">+2.89%</span></div>
+          <div class="row"><span>Total DMG Increase</span><span id="b_pct" class="value gold big">+2.89%</span></div>
           <div class="row"><span>Damage Score</span><span id="b_score" class="value gold">0.000</span></div>
         </div>
 
@@ -439,12 +441,13 @@
     </div>
 
     <div class="formula">D = (0.03043 × Atk. Power) + (0.07782 × Boss Damage) + (0.05556 × Additional Damage)
-DMG % = (e^(D / 100) − 1) × 100</div>
+Gem DMG % = (e^(D / 100) − 1) × 100
+Total DMG % = 2.89 + Gem DMG %</div>
 
     <div class="note">
       Damage is calculated multiplicatively in log space. Relative point value is roughly
       1 Boss Damage ≈ 1.40 Additional Damage ≈ 2.56 Atk. Power.
-      This calculator estimates standalone Astrogem DPS value from the three DPS lines only.
+      A fixed +2.89% base increase is included in Total DMG Increase, with the Astrogem DPS value added on top.
     </div>
   </section>
 
@@ -453,6 +456,7 @@ DMG % = (e^(D / 100) − 1) × 100</div>
 
 <script>
 const COEF = { ap: 0.03043, boss: 0.07782, add: 0.05556 };
+const BASE_DMG = 2.89;
 
 function num(id){
   const v = parseFloat(document.getElementById(id).value);
@@ -465,7 +469,8 @@ function calc(prefix){
   const add = num(prefix+"_add");
 
   const D = (COEF.ap * ap) + (COEF.boss * boss) + (COEF.add * add);
-  const pct = (Math.exp(D / 100) - 1) * 100;
+  const gemPct = (Math.exp(D / 100) - 1) * 100;
+  const pct = BASE_DMG + gemPct;
 
   document.getElementById(prefix+"_pct").textContent = "+" + pct.toFixed(2) + "%";
   document.getElementById(prefix+"_score").textContent = D.toFixed(3);
