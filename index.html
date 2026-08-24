@@ -1,511 +1,397 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="theme-color" content="#090b10" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#090b10">
 <title>Ark Grid Astrogem DMG % Calculator</title>
 <style>
-  :root{
-    --bg:#07090d;
-    --panel:#10151d;
-    --panel2:#0b0f15;
-    --border:rgba(154,176,210,.16);
-    --text:#f5f7fb;
-    --muted:#96a2b5;
-    --gold:#ffd36a;
-    --gold2:#fff0b7;
-    --cyan:#65d8ff;
-    --green:#55e39a;
-    --red:#ff7070;
-  }
-
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0}
-  body{
-    min-height:100vh;
-    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    color:var(--text);
-    background:
-      radial-gradient(circle at 12% 0%, rgba(101,216,255,.07), transparent 28%),
-      radial-gradient(circle at 88% 0%, rgba(167,132,255,.07), transparent 30%),
-      linear-gradient(180deg,#07090d 0%,#090c12 50%,#07090d 100%);
-  }
-
-  .wrap{
-    width:min(1040px,calc(100% - 28px));
-    margin:32px auto 72px;
-  }
-
-  .hero{
-    position:relative;
-    overflow:hidden;
-    padding:34px;
-    border:1px solid rgba(255,211,106,.24);
-    border-radius:22px;
-    background:linear-gradient(135deg,rgba(255,255,255,.035),rgba(255,255,255,.01)),#0b0e14;
-    box-shadow:0 12px 32px rgba(0,0,0,.26);
-    margin-bottom:20px;
-  }
-
-  .hero::before{
-    content:"";
-    position:absolute;
-    width:280px;
-    height:280px;
-    top:-150px;
-    right:-80px;
-    border-radius:50%;
-    background:radial-gradient(circle,rgba(101,216,255,.10),rgba(167,132,255,.04) 40%,transparent 70%);
-    pointer-events:none;
-  }
-
-  .brandline{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    color:var(--gold2);
-    font-size:12px;
-    font-weight:800;
-    letter-spacing:.18em;
-    text-transform:uppercase;
-    margin-bottom:12px;
-  }
-
-  .sigil{
-    width:26px;
-    height:26px;
-    position:relative;
-    display:inline-block;
-  }
-
-  .sigil::before,.sigil::after{
-    content:"";
-    position:absolute;
-    border:1px solid rgba(101,216,255,.75);
-    transform:rotate(45deg);
-    border-radius:3px;
-  }
-
-  .sigil::before{inset:3px}
-  .sigil::after{inset:8px;border-color:rgba(255,211,106,.8)}
-
-  h1{
-    margin:0;
-    max-width:760px;
-    font-size:clamp(30px,5vw,46px);
-    line-height:1.04;
-    letter-spacing:-.035em;
-  }
-
-  .title-accent{
-    background:linear-gradient(90deg,var(--gold2),var(--gold),#fff);
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
-  }
-
-  .subtitle{
-    margin-top:13px;
-    max-width:720px;
-    color:var(--muted);
-    font-size:15px;
-    line-height:1.65;
-  }
-
-  .card{
-    background:linear-gradient(180deg,#11161e,#0c1016);
-    border:1px solid var(--border);
-    border-radius:18px;
-    overflow:hidden;
-    box-shadow:0 10px 28px rgba(0,0,0,.24);
-    margin-bottom:18px;
-  }
-
-  .cardhead{
-    padding:17px 20px;
-    border-bottom:1px solid var(--border);
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    background:linear-gradient(90deg,rgba(255,211,106,.035),transparent 35%);
-  }
-
-  .cardhead h2{font-size:17px;margin:0}
-  .tag{
-    font-size:11px;
-    color:var(--gold2);
-    border:1px solid rgba(255,211,106,.22);
-    background:rgba(255,211,106,.05);
-    border-radius:999px;
-    padding:5px 9px;
-  }
-
-  .body{padding:20px}
-
-  .inputs{
-    display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:12px;
-  }
-
-  label{
-    color:#aeb9c9;
-    font-size:12px;
-    font-weight:700;
-    display:block;
-    margin-bottom:7px;
-  }
-
-  input[type="number"]{
-    width:100%;
-    background:#080b10;
-    border:1px solid #313b49;
-    color:#fff;
-    border-radius:11px;
-    font-size:18px;
-    font-weight:800;
-    padding:13px 14px;
-    outline:none;
-    transition:border-color .15s ease,box-shadow .15s ease;
-  }
-
-  input[type="number"]:focus{
-    border-color:rgba(101,216,255,.8);
-    box-shadow:0 0 0 3px rgba(101,216,255,.08);
-  }
-
-  .resultbox{
-    margin-top:17px;
-    border:1px solid rgba(255,211,106,.30);
-    background:#0a0d12;
-    border-radius:13px;
-    padding:17px;
-  }
-
-  .row{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:14px;
-    padding:6px 0;
-  }
-
-  .row span:first-child{color:#cbd5e1;font-size:14px}
-  .value{font-weight:900;font-size:18px}
-  .gold{color:var(--gold)}
-  .big{font-size:30px;letter-spacing:-.03em}
-
-  .togglewrap{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:16px;
-    padding:17px 20px;
-    background:#0a0d12;
-    border-top:1px solid var(--border);
-  }
-
-  .togglecopy strong{display:block;font-size:14px}
-  .togglecopy span{display:block;color:var(--muted);font-size:12px;margin-top:3px}
-
-  .switch{
-    position:relative;
-    width:56px;
-    height:31px;
-    flex:0 0 auto;
-  }
-
-  .switch input{display:none}
-
-  .slider{
-    position:absolute;
-    inset:0;
-    cursor:pointer;
-    background:#26303c;
-    border-radius:999px;
-    border:1px solid #3a4655;
-    transition:background .2s ease,border-color .2s ease;
-  }
-
-  .slider::before{
-    content:"";
-    position:absolute;
-    width:23px;
-    height:23px;
-    left:3px;
-    top:3px;
-    background:#fff;
-    border-radius:50%;
-    transition:transform .2s ease,background .2s ease;
-  }
-
-  .switch input:checked + .slider{
-    background:rgba(101,216,255,.20);
-    border-color:rgba(101,216,255,.65);
-  }
-
-  .switch input:checked + .slider::before{
-    transform:translateX(25px);
-    background:var(--gold2);
-  }
-
-  #comparisonArea{display:none}
-  #comparisonArea.show{display:block}
-
-  .compareResult{
-    margin-top:15px;
-    padding:20px;
-    border:1px solid var(--border);
-    border-radius:13px;
-    background:#0a0e14;
-    text-align:center;
-  }
-
-  .compareLabel{
-    color:var(--muted);
-    font-size:11px;
-    text-transform:uppercase;
-    letter-spacing:.14em;
-  }
-
-  .compareValue{
-    font-size:36px;
-    font-weight:950;
-    margin:8px 0 4px;
-    letter-spacing:-.035em;
-  }
-
-  .compareSub{font-size:13px;color:var(--muted)}
-  .good{color:var(--green)}
-  .bad{color:var(--red)}
-  .neutral{color:var(--text)}
-
-  .section{
-    margin-top:22px;
-    padding:21px;
-    background:linear-gradient(180deg,#10151d,#0b0f15);
-    border:1px solid var(--border);
-    border-radius:17px;
-    box-shadow:0 10px 26px rgba(0,0,0,.18);
-  }
-
-  .section h3{margin:0 0 13px;font-size:18px}
-
-  .weights{
-    display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:12px;
-  }
-
-  .weight{
-    background:#0a0e14;
-    border:1px solid var(--border);
-    border-radius:12px;
-    padding:15px;
-  }
-
-  .weight strong{display:block;font-size:20px;margin-top:5px}
-  .weight small{color:var(--muted);line-height:1.45}
-
-  .formula{
-    margin-top:14px;
-    padding:14px 15px;
-    background:#080b10;
-    border:1px dashed #394656;
-    border-radius:10px;
-    color:#cbd5e1;
-    font-family:Consolas,monospace;
-    font-size:13px;
-    overflow:auto;
-    white-space:pre-line;
-  }
-
-  .note{
-    color:var(--muted);
-    font-size:12px;
-    line-height:1.6;
-    margin-top:12px;
-  }
-
-  .footer{
-    text-align:center;
-    color:#647084;
-    font-size:11px;
-    margin-top:22px;
-  }
-
-  @media(max-width:780px){
-    .wrap{
-      width:min(100% - 18px,1040px);
-      margin-top:18px;
-    }
-    .hero{padding:26px 22px}
-    .inputs,.weights{grid-template-columns:1fr}
-    .body{padding:16px}
-    .cardhead,.togglewrap{padding-left:16px;padding-right:16px}
-    .row{align-items:flex-start}
-    .big{font-size:26px}
-  }
+:root{--bg:#07090d;--panel:#10151d;--panel2:#0b0f15;--border:rgba(154,176,210,.16);--text:#f5f7fb;--muted:#96a2b5;--gold:#ffd36a;--gold2:#fff0b7;--cyan:#65d8ff;--green:#55e39a;--red:#ff7070}
+*{box-sizing:border-box} html,body{margin:0;padding:0}
+body{min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:radial-gradient(circle at 12% 0%,rgba(101,216,255,.07),transparent 28%),radial-gradient(circle at 88% 0%,rgba(167,132,255,.07),transparent 30%),linear-gradient(180deg,#07090d 0%,#090c12 50%,#07090d 100%)}
+.wrap{width:min(1040px,calc(100% - 28px));margin:32px auto 72px}
+.hero{position:relative;overflow:hidden;padding:34px;border:1px solid rgba(255,211,106,.24);border-radius:22px;background:linear-gradient(135deg,rgba(255,255,255,.035),rgba(255,255,255,.01)),#0b0e14;box-shadow:0 12px 32px rgba(0,0,0,.26);margin-bottom:20px}
+.hero::before{content:"";position:absolute;width:280px;height:280px;top:-150px;right:-80px;border-radius:50%;background:radial-gradient(circle,rgba(101,216,255,.10),rgba(167,132,255,.04) 40%,transparent 70%);pointer-events:none}
+.brandline{display:flex;align-items:center;gap:10px;color:var(--gold2);font-size:12px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;margin-bottom:12px}
+.sigil{width:26px;height:26px;position:relative;display:inline-block} .sigil::before,.sigil::after{content:"";position:absolute;border:1px solid rgba(101,216,255,.75);transform:rotate(45deg);border-radius:3px} .sigil::before{inset:3px} .sigil::after{inset:8px;border-color:rgba(255,211,106,.8)}
+h1{margin:0;max-width:780px;font-size:clamp(30px,5vw,46px);line-height:1.04;letter-spacing:-.035em}
+.title-accent{background:linear-gradient(90deg,var(--gold2),var(--gold),#fff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.subtitle{margin-top:13px;max-width:790px;color:var(--muted);font-size:15px;line-height:1.65}
+.card,.section{background:linear-gradient(180deg,#11161e,#0c1016);border:1px solid var(--border);border-radius:18px;box-shadow:0 10px 28px rgba(0,0,0,.24);margin-bottom:18px}
+.card{overflow:hidden} .cardhead{padding:17px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(90deg,rgba(255,211,106,.035),transparent 35%)} .cardhead h2{font-size:17px;margin:0}
+.tag{font-size:11px;color:var(--gold2);border:1px solid rgba(255,211,106,.22);background:rgba(255,211,106,.05);border-radius:999px;padding:5px 9px}
+.body{padding:20px} .inputs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+label{color:#aeb9c9;font-size:12px;font-weight:700;display:block;margin-bottom:7px}
+input[type=number]{width:100%;background:#080b10;border:1px solid #313b49;color:#fff;border-radius:11px;font-size:18px;font-weight:800;padding:13px 14px;outline:none;transition:border-color .15s ease,box-shadow .15s ease}
+input[type=number]:focus{border-color:rgba(101,216,255,.8);box-shadow:0 0 0 3px rgba(101,216,255,.08)}
+.resultbox{margin-top:17px;border:1px solid rgba(255,211,106,.30);background:#0a0d12;border-radius:13px;padding:17px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:6px 0} .row span:first-child{color:#cbd5e1;font-size:14px}
+.value{font-weight:900;font-size:18px} .gold{color:var(--gold)} .big{font-size:30px;letter-spacing:-.03em} .good{color:var(--green)} .bad{color:var(--red)} .neutral{color:var(--text)}
+.warning{display:none;margin-top:12px;padding:11px 12px;border:1px solid rgba(255,112,112,.35);background:rgba(255,112,112,.06);border-radius:10px;color:#ffc3c3;font-size:12px;line-height:1.5} .warning.show{display:block}
+.togglewrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:17px 20px;background:#0a0d12;border-top:1px solid var(--border)}
+.togglecopy strong{display:block;font-size:14px} .togglecopy span{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+.switch{position:relative;width:56px;height:31px;flex:0 0 auto} .switch input{display:none}
+.slider{position:absolute;inset:0;cursor:pointer;background:#26303c;border-radius:999px;border:1px solid #3a4655;transition:.2s} .slider::before{content:"";position:absolute;width:23px;height:23px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.switch input:checked + .slider{background:rgba(101,216,255,.20);border-color:rgba(101,216,255,.65)} .switch input:checked + .slider::before{transform:translateX(25px);background:var(--gold2)}
+#comparisonArea,#plannerArea{display:none} #comparisonArea.show,#plannerArea.show{display:block}
+.compareResult,.plannerResult{margin-top:15px;padding:20px;border:1px solid var(--border);border-radius:13px;background:#0a0e14;text-align:center}
+.compareLabel{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.14em} .compareValue{font-size:36px;font-weight:950;margin:8px 0 4px;letter-spacing:-.035em} .compareSub{font-size:13px;color:var(--muted);line-height:1.5}
+.stats4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px} .metric{background:#0a0e14;border:1px solid var(--border);border-radius:12px;padding:14px} .metric small{display:block;color:var(--muted);font-size:11px;line-height:1.35} .metric strong{display:block;margin-top:5px;font-size:20px} .grade{font-size:28px!important;color:var(--gold)}
+.section{padding:21px} .section h3{margin:0 0 13px;font-size:18px} .weights,.rules{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.weight,.rule{background:#0a0e14;border:1px solid var(--border);border-radius:12px;padding:15px} .weight strong,.rule strong{display:block;font-size:20px;margin-top:5px} .weight small,.rule small{color:var(--muted);line-height:1.45}
+.formula{margin-top:14px;padding:14px 15px;background:#080b10;border:1px dashed #394656;border-radius:10px;color:#cbd5e1;font-family:Consolas,monospace;font-size:13px;overflow:auto;white-space:pre-line}
+.note{color:var(--muted);font-size:12px;line-height:1.65;margin-top:12px}
+.planner-grid{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end} .btn{border:1px solid rgba(255,211,106,.32);background:rgba(255,211,106,.09);color:var(--gold2);border-radius:11px;padding:13px 16px;font-weight:800;cursor:pointer} .btn:hover{background:rgba(255,211,106,.14)}
+.recommend{margin-top:14px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px} .rec{border:1px solid var(--border);background:#0b1016;border-radius:10px;padding:12px} .rec small{color:var(--muted)} .rec strong{display:block;margin-top:4px;font-size:18px}
+.footer{text-align:center;color:#647084;font-size:11px;margin-top:22px}
+@media(max-width:780px){.wrap{width:min(100% - 18px,1040px);margin-top:18px} .hero{padding:26px 22px} .inputs,.weights,.rules,.stats4,.recommend{grid-template-columns:1fr} .planner-grid{grid-template-columns:1fr} .body{padding:16px} .cardhead,.togglewrap{padding-left:16px;padding-right:16px} .row{align-items:flex-start} .big{font-size:26px}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <section class="hero">
-    <div class="brandline"><span class="sigil"></span> Ark Grid Tool</div>
-    <h1>Ark Grid Astrogem <span class="title-accent">DMG % Calculator</span></h1>
-    <div class="subtitle">
-      Enter your Astrogem DPS rolls to estimate the total Ark Grid damage increase, including the fixed +2.89% baseline.
-      Turn on comparison only when you want to check a second Ark Grid against the first.
+<section class="hero">
+  <div class="brandline"><span class="sigil"></span> Ark Grid Tool</div>
+  <h1>Ark Grid Astrogem <span class="title-accent">DMG % Calculator</span></h1>
+  <div class="subtitle">Enter your total Astrogem DPS points to estimate your real Ark Grid damage increase. The calculator checks all 6 main cores separately: each core can equip up to 4 Astrogems and has its own 17 Willpower limit. Across all 6 cores that is up to 24 Astrogems and 102 total Willpower, but the 17-point limit is enforced per core.</div>
+</section>
+
+<section class="card">
+  <div class="cardhead"><h2>Ark Grid A</h2><span class="tag">Primary Grid</span></div>
+  <div class="body">
+    <div class="inputs">
+      <div><label>Atk. Power</label><input id="a_ap" type="number" value="0" min="0" max="120" step="1"></div>
+      <div><label>Boss Damage</label><input id="a_boss" type="number" value="0" min="0" max="120" step="1"></div>
+      <div><label>Additional Damage</label><input id="a_add" type="number" value="0" min="0" max="120" step="1"></div>
     </div>
-  </section>
-
-  <section class="card">
-    <div class="cardhead">
-      <h2>Ark Grid A</h2>
-      <span class="tag">Primary Grid</span>
+    <div id="a_warning" class="warning"></div>
+    <div class="resultbox">
+      <div class="row"><span>Base Grid Increase</span><span class="value">+2.89%</span></div>
+      <div class="row"><span>Total DMG Increase</span><span id="a_pct" class="value gold big">+2.89%</span></div>
+      <div class="row"><span>Damage Score</span><span id="a_score" class="value gold">0.000</span></div>
     </div>
-    <div class="body">
-      <div class="inputs">
-        <div><label>Atk. Power</label><input id="a_ap" type="number" value="0" min="0" step="1"></div>
-        <div><label>Boss Damage</label><input id="a_boss" type="number" value="0" min="0" step="1"></div>
-        <div><label>Additional Damage</label><input id="a_add" type="number" value="0" min="0" step="1"></div>
-      </div>
-
-      <div class="resultbox">
-        <div class="row"><span>Base Grid Increase</span><span class="value">+2.89%</span></div>
-        <div class="row"><span>Total DMG Increase</span><span id="a_pct" class="value gold big">+2.89%</span></div>
-        <div class="row"><span>Damage Score</span><span id="a_score" class="value gold">0.000</span></div>
-      </div>
+    <div class="stats4">
+      <div class="metric"><small>Total Astrogem Points</small><strong id="a_points">0 / 240</strong></div>
+      <div class="metric"><small>Current Total DMG</small><strong id="a_current_pct">+2.89%</strong></div>
+      <div class="metric"><small>Grade</small><strong id="a_grade" class="grade">F</strong></div>
+      <div class="metric"><small>Theoretical Max DMG</small><strong>+18.62%</strong></div>
     </div>
-
-    <div class="togglewrap">
-      <div class="togglecopy">
-        <strong>Compare another Ark Grid</strong>
-        <span>Optional — enable only when comparing two setups.</span>
-      </div>
-      <label class="switch">
-        <input id="compareToggle" type="checkbox" aria-label="Enable Ark Grid comparison">
-        <span class="slider"></span>
-      </label>
-    </div>
-  </section>
-
-  <div id="comparisonArea">
-    <section class="card">
-      <div class="cardhead">
-        <h2>Ark Grid B</h2>
-        <span class="tag">Comparison Grid</span>
-      </div>
-      <div class="body">
-        <div class="inputs">
-          <div><label>Atk. Power</label><input id="b_ap" type="number" value="0" min="0" step="1"></div>
-          <div><label>Boss Damage</label><input id="b_boss" type="number" value="0" min="0" step="1"></div>
-          <div><label>Additional Damage</label><input id="b_add" type="number" value="0" min="0" step="1"></div>
-        </div>
-
-        <div class="resultbox">
-          <div class="row"><span>Base Grid Increase</span><span class="value">+2.89%</span></div>
-          <div class="row"><span>Total DMG Increase</span><span id="b_pct" class="value gold big">+2.89%</span></div>
-          <div class="row"><span>Damage Score</span><span id="b_score" class="value gold">0.000</span></div>
-        </div>
-
-        <div class="compareResult">
-          <div class="compareLabel">Ark Grid B compared with Ark Grid A</div>
-          <div id="relative" class="compareValue neutral">0.00%</div>
-          <div id="relativeSub" class="compareSub">The two Ark Grids are equal.</div>
-        </div>
-      </div>
-    </section>
   </div>
 
-  <section class="section">
-    <h3>Estimated damage value per point</h3>
-    <div class="weights">
-      <div class="weight">
-        <small>+1 Atk. Power</small>
-        <strong>≈ +0.0264 score</strong>
-        <small>Lowest value of the three DPS lines.</small>
+  <div class="togglewrap">
+    <div class="togglecopy"><strong>Target Damage Planner</strong><span>Choose a target total DPS increase and see the best-case minimum extra stat points needed.</span></div>
+    <label class="switch"><input id="plannerToggle" type="checkbox"><span class="slider"></span></label>
+  </div>
+
+  <div id="plannerArea">
+    <div class="body">
+      <div class="planner-grid">
+        <div><label>Target Total DMG Increase %</label><input id="target_pct" type="number" value="12" min="2.89" max="18.62" step="0.01"></div>
+        <button id="planBtn" class="btn" type="button">Calculate Points Needed</button>
       </div>
-      <div class="weight">
-        <small>+1 Boss Damage</small>
-        <strong>≈ +0.0808 score</strong>
-        <small>Highest value of the three DPS lines.</small>
-      </div>
-      <div class="weight">
-        <small>+1 Additional Damage</small>
-        <strong>≈ +0.0597 score</strong>
-        <small>Sits between Boss Damage and Atk. Power.</small>
+      <div class="plannerResult">
+        <div class="compareLabel">Target Result</div>
+        <div id="need_points" class="compareValue neutral">—</div>
+        <div id="plan_sub" class="compareSub">Choose a target and calculate.</div>
+        <div class="recommend">
+          <div class="rec"><small>Add Atk. Power</small><strong id="rec_ap">—</strong></div>
+          <div class="rec"><small>Add Boss Damage</small><strong id="rec_boss">—</strong></div>
+          <div class="rec"><small>Add Additional Damage</small><strong id="rec_add">—</strong></div>
+        </div>
       </div>
     </div>
+  </div>
 
-    <div class="formula">D = (0.02637 × Atk. Power) + (0.08082 × Boss Damage) + (0.05971 × Additional Damage)
+  <div class="togglewrap">
+    <div class="togglecopy"><strong>Compare another Ark Grid</strong><span>Optional — compare Ark Grid B directly against Ark Grid A.</span></div>
+    <label class="switch"><input id="compareToggle" type="checkbox"><span class="slider"></span></label>
+  </div>
+</section>
+
+<div id="comparisonArea">
+<section class="card">
+  <div class="cardhead"><h2>Ark Grid B</h2><span class="tag">Comparison Grid</span></div>
+  <div class="body">
+    <div class="inputs">
+      <div><label>Atk. Power</label><input id="b_ap" type="number" value="0" min="0" max="120" step="1"></div>
+      <div><label>Boss Damage</label><input id="b_boss" type="number" value="0" min="0" max="120" step="1"></div>
+      <div><label>Additional Damage</label><input id="b_add" type="number" value="0" min="0" max="120" step="1"></div>
+    </div>
+    <div id="b_warning" class="warning"></div>
+    <div class="resultbox">
+      <div class="row"><span>Base Grid Increase</span><span class="value">+2.89%</span></div>
+      <div class="row"><span>Total DMG Increase</span><span id="b_pct" class="value gold big">+2.89%</span></div>
+      <div class="row"><span>Damage Score</span><span id="b_score" class="value gold">0.000</span></div>
+    </div>
+    <div class="compareResult">
+      <div class="compareLabel">Ark Grid B compared with Ark Grid A</div>
+      <div id="relative" class="compareValue neutral">0.00%</div>
+      <div id="relativeSub" class="compareSub">The two Ark Grids are equal.</div>
+    </div>
+  </div>
+</section>
+</div>
+
+<section class="section">
+<h3>Theoretical Maximum</h3>
+<div class="rules">
+  <div class="rule"><small>Maximum Astrogems</small><strong>24</strong><small>6 main cores × up to 4 Astrogems.</small></div>
+  <div class="rule"><small>Maximum Effect Points</small><strong>240</strong><small>24 perfect 5/5 Astrogems × 10 total effect points each.</small></div>
+  <div class="rule"><small>Theoretical Max Total DMG</small><strong>+18.62%</strong><small>This is the real calculated DPS increase, not a 100% score.</small></div>
+</div>
+<div class="note">
+  I rechecked every legal per-main-core combination of 0–4 Astrogems at 17 Willpower or less.
+  The maximum-DPS perfect setup per main core is <strong>1× 3-Willpower + 1× 4-Willpower + 2× 5-Willpower</strong> = exactly 17 Willpower. Repeating that on all 6 main cores uses <strong>24 Astrogems and 102 total Willpower</strong>.
+  Across all 6 main cores that gives <strong>60 Atk. Power, 90 Boss Damage and 90 Additional Damage</strong> = 240 total effect points.
+  With the current damage formula, that equals <strong>+18.62% actual total DPS</strong>.
+</div>
+</section>
+
+<section class="section">
+<h3>Astrogem & Willpower Rules</h3>
+<div class="rules">
+  <div class="rule"><small>3 Willpower Astrogem</small><strong>Atk. + Additional</strong><small>Up to 5 Atk. Power and 5 Additional Damage.</small></div>
+  <div class="rule"><small>4 Willpower Astrogem</small><strong>Atk. + Boss</strong><small>Up to 5 Atk. Power and 5 Boss Damage.</small></div>
+  <div class="rule"><small>5 Willpower Astrogem</small><strong>Additional + Boss</strong><small>Up to 5 Additional Damage and 5 Boss Damage.</small></div>
+</div>
+<div class="note">Each Astrogem has 2 effect rolls and each roll can reach 5 points, so a perfect Astrogem is 5/5 = 10 total effect points. Each main core can equip up to 4 Astrogems and has at most 17 Willpower. With 6 main cores, the full grid can use up to 24 Astrogems and 102 total Willpower, but no individual core may exceed 17. If an aggregate stat combination cannot exist under those limits, the calculator marks it as impossible instead of displaying an inflated DPS result.</div>
+</section>
+
+<section class="section">
+<h3>Estimated damage value per point</h3>
+<div class="weights">
+  <div class="weight"><small>+1 Atk. Power</small><strong>≈ +0.02637 score</strong><small>Lowest value of the three DPS lines.</small></div>
+  <div class="weight"><small>+1 Boss Damage</small><strong>≈ +0.08082 score</strong><small>Highest value of the three DPS lines.</small></div>
+  <div class="weight"><small>+1 Additional Damage</small><strong>≈ +0.05971 score</strong><small>Sits between Boss Damage and Atk. Power.</small></div>
+</div>
+<div class="formula">D = (0.02637 × Atk. Power) + (0.08082 × Boss Damage) + (0.05971 × Additional Damage)
 Total DMG % = ((1.0289 × e^(D / 100)) − 1) × 100</div>
+<div class="note">The fixed +2.89% Ark Grid baseline is applied first, then the Astrogem DPS effect is applied multiplicatively. Relative point value is roughly 1 Boss Damage ≈ 1.35 Additional Damage ≈ 3.07 Atk. Power.</div>
+</section>
 
-    <div class="note">
-      This calculator includes a fixed +2.89% Ark Grid baseline, then applies the Astrogem DPS lines multiplicatively.
-      The recalibrated DPS weights are 0.02637 per Atk. Power, 0.08082 per Boss Damage, and 0.05971 per Additional Damage.
-      Relative point value is roughly 1 Boss Damage ≈ 1.35 Additional Damage ≈ 3.07 Atk. Power.
-    </div>
-  </section>
+<section class="section">
+<h3>Damage & Grade</h3>
+<div class="note">
+  Every large percentage shown by the calculator is an <strong>actual total DPS increase</strong>.
+  Grades are tuned around realistic Ark Grid progression rather than equal chunks of the theoretical maximum.
+  A low-level or early Ark Grid around <strong>4–5% total damage</strong> is already in the <strong>B tier range</strong>, while S and SS grades remain difficult to reach.
+  <br><br>
+  Each main grade now has <strong>−, normal, and +</strong> versions:
+  <br><br>
+  <strong>SS+</strong> +18.25% and above •
+  <strong>SS</strong> +17.90%–18.24% •
+  <strong>SS−</strong> +17.50%–17.89%
+  <br>
+  <strong>S+</strong> +16.50%–17.49% •
+  <strong>S</strong> +15.50%–16.49% •
+  <strong>S−</strong> +14.50%–15.49%
+  <br>
+  <strong>A+</strong> +12.33%–14.49% •
+  <strong>A</strong> +10.17%–12.32% •
+  <strong>A−</strong> +8.00%–10.16%
+  <br>
+  <strong>B+</strong> +6.67%–7.99% •
+  <strong>B</strong> +5.34%–6.66% •
+  <strong>B−</strong> +4.00%–5.33%
+  <br>
+  <strong>C+</strong> +3.84%–3.99% •
+  <strong>C</strong> +3.67%–3.83% •
+  <strong>C−</strong> +3.50%–3.66%
+  <br>
+  <strong>D+</strong> +3.30%–3.49% •
+  <strong>D</strong> +3.10%–3.29% •
+  <strong>D−</strong> above +2.89% up to +3.09%
+  <br>
+  <strong>F</strong> = the empty/base +2.89% grid.
+  <br><br>
+  <strong>SS+</strong> is effectively perfect or extremely close to the +18.62% theoretical maximum. A grades are already strong developed grids, while the B range is meant to cover typical lower-level and developing Ark Grids.
+</div>
+</section>
 
-  <div class="footer">Ark Grid Astrogem DMG % Calculator</div>
+<div class="footer">Ark Grid Astrogem DMG % Calculator</div>
 </div>
 
 <script>
-const COEF = { ap: 0.02637, boss: 0.08082, add: 0.05971 };
-const BASE_DMG = 2.89;
+const COEF={ap:0.02637,boss:0.08082,add:0.05971};
+const BASE_DMG=2.89;
+const GEMS_PER_CORE=4, MAIN_CORES=6, MAX_WP_PER_CORE=17;
+
+function buildFeasibleLayouts(){
+  const core=[];
+  for(let n3=0;n3<=4;n3++) for(let n4=0;n4<=4;n4++) for(let n5=0;n5<=4;n5++){
+    if(n3+n4+n5>GEMS_PER_CORE) continue;
+    const wp=3*n3+4*n4+5*n5;
+    if(wp<=MAX_WP_PER_CORE) core.push({n3,n4,n5,wp});
+  }
+  let states=new Map();
+  states.set("0,0,0",{n3:0,n4:0,n5:0});
+  for(let c=0;c<MAIN_CORES;c++){
+    const next=new Map();
+    for(const s of states.values()) for(const x of core){
+      const n3=s.n3+x.n3,n4=s.n4+x.n4,n5=s.n5+x.n5;
+      next.set(`${n3},${n4},${n5}`,{n3,n4,n5});
+    }
+    states=next;
+  }
+  return [...states.values()].map(s=>({
+    ...s,
+    apCap:5*(s.n3+s.n4),
+    addCap:5*(s.n3+s.n5),
+    bossCap:5*(s.n4+s.n5)
+  }));
+}
+const FEASIBLE=buildFeasibleLayouts();
+
+function totalDmgFromD(D){return (((1+BASE_DMG/100)*Math.exp(D/100))-1)*100}
+function DfromTotalDmg(pct){return 100*Math.log((1+pct/100)/(1+BASE_DMG/100))}
+
+function findTheoreticalMax(){
+  let best=null;
+  for(const l of FEASIBLE){
+    const D=COEF.ap*l.apCap+COEF.boss*l.bossCap+COEF.add*l.addCap;
+    if(!best||D>best.D) best={...l,D,pct:totalDmgFromD(D)};
+  }
+  return best;
+}
+const MAX=findTheoreticalMax();
+
+function gradeByDmg(pct){
+  if(pct >= 18.25) return "SS+";
+  if(pct >= 17.90) return "SS";
+  if(pct >= 17.50) return "SS-";
+
+  if(pct >= 16.50) return "S+";
+  if(pct >= 15.50) return "S";
+  if(pct >= 14.50) return "S-";
+
+  if(pct >= 12.33) return "A+";
+  if(pct >= 10.17) return "A";
+  if(pct >= 8.00) return "A-";
+
+  if(pct >= 6.67) return "B+";
+  if(pct >= 5.34) return "B";
+  if(pct >= 4.00) return "B-";
+
+  if(pct >= 3.84) return "C+";
+  if(pct >= 3.67) return "C";
+  if(pct >= 3.50) return "C-";
+
+  if(pct >= 3.30) return "D+";
+  if(pct >= 3.10) return "D";
+  if(pct > 2.89) return "D-";
+
+  return "F";
+}
 
 function num(id){
-  const v = parseFloat(document.getElementById(id).value);
-  return Number.isFinite(v) ? Math.max(0, v) : 0;
+  let v=parseFloat(document.getElementById(id).value);
+  if(!Number.isFinite(v))v=0;
+  return Math.max(0,Math.min(120,v));
+}
+
+function feasibleLayoutsFor(ap,boss,add){
+  return FEASIBLE.filter(l=>ap<=l.apCap&&boss<=l.bossCap&&add<=l.addCap);
 }
 
 function calc(prefix){
-  const ap = num(prefix+"_ap");
-  const boss = num(prefix+"_boss");
-  const add = num(prefix+"_add");
+  const ap=num(prefix+"_ap"),boss=num(prefix+"_boss"),add=num(prefix+"_add");
+  const warning=document.getElementById(prefix+"_warning");
+  const layouts=feasibleLayoutsFor(ap,boss,add);
+  const possible=layouts.length>0&&ap+boss+add<=240;
 
-  const D = (COEF.ap * ap) + (COEF.boss * boss) + (COEF.add * add);
-  const pct = (((1 + BASE_DMG / 100) * Math.exp(D / 100)) - 1) * 100;
-
-  document.getElementById(prefix+"_pct").textContent = "+" + pct.toFixed(2) + "%";
-  document.getElementById(prefix+"_score").textContent = D.toFixed(3);
-
-  return {D, pct};
-}
-
-function update(){
-  const A = calc("a");
-  const B = calc("b");
-
-  const rel = ((1 + B.pct/100) / (1 + A.pct/100) - 1) * 100;
-  const el = document.getElementById("relative");
-  const sub = document.getElementById("relativeSub");
-
-  if (Math.abs(rel) < 0.0005){
-    el.textContent = "0.00%";
-    el.className = "compareValue neutral";
-    sub.textContent = "The two Ark Grids are equal.";
-  } else if (rel > 0){
-    el.textContent = "+" + rel.toFixed(2) + "% DMG";
-    el.className = "compareValue good";
-    sub.textContent = "Ark Grid B is stronger than Ark Grid A.";
-  } else {
-    el.textContent = rel.toFixed(2) + "% DMG";
-    el.className = "compareValue bad";
-    sub.textContent = "Ark Grid B is weaker than Ark Grid A.";
+  if(!possible){
+    warning.textContent="Impossible Ark Grid point combination under the 24-Astrogem / 17-Willpower-per-main-core limits.";
+    warning.classList.add("show");
+    document.getElementById(prefix+"_pct").textContent="Impossible";
+    document.getElementById(prefix+"_score").textContent="—";
+    if(prefix==="a"){
+      document.getElementById("a_points").textContent=(ap+boss+add).toFixed(0)+" / 240";
+      document.getElementById("a_current_pct").textContent="—";
+      document.getElementById("a_grade").textContent="—";
+    }
+    return{possible:false,ap,boss,add,pct:null,D:null,layouts:[]};
   }
+
+  warning.classList.remove("show");
+  const D=COEF.ap*ap+COEF.boss*boss+COEF.add*add;
+  const pct=totalDmgFromD(D);
+  document.getElementById(prefix+"_pct").textContent="+"+pct.toFixed(2)+"%";
+  document.getElementById(prefix+"_score").textContent=D.toFixed(3);
+
+  if(prefix==="a"){
+    document.getElementById("a_points").textContent=(ap+boss+add).toFixed(0)+" / 240";
+    document.getElementById("a_current_pct").textContent="+"+pct.toFixed(2)+"%";
+    document.getElementById("a_grade").textContent=gradeByDmg(pct);
+  }
+  return{possible:true,ap,boss,add,pct,D,layouts};
 }
 
-document.querySelectorAll('input[type="number"]').forEach(i => i.addEventListener("input", update));
+function updateComparison(){
+  const A=calc("a"),B=calc("b");
+  const el=document.getElementById("relative"),sub=document.getElementById("relativeSub");
+  if(!A.possible||!B.possible){el.textContent="—";el.className="compareValue neutral";sub.textContent="Enter two possible Ark Grid point combinations.";return}
+  const rel=((1+B.pct/100)/(1+A.pct/100)-1)*100;
+  if(Math.abs(rel)<.0005){el.textContent="0.00%";el.className="compareValue neutral";sub.textContent="The two Ark Grids are equal."}
+  else if(rel>0){el.textContent="+"+rel.toFixed(2)+"% DMG";el.className="compareValue good";sub.textContent="Ark Grid B is stronger than Ark Grid A."}
+  else{el.textContent=rel.toFixed(2)+"% DMG";el.className="compareValue bad";sub.textContent="Ark Grid B is weaker than Ark Grid A."}
+}
 
-document.getElementById("compareToggle").addEventListener("change", e => {
-  document.getElementById("comparisonArea").classList.toggle("show", e.target.checked);
-});
+function planTarget(){
+  const A=calc("a");
+  const need=document.getElementById("need_points"),sub=document.getElementById("plan_sub");
+  const rap=document.getElementById("rec_ap"),rb=document.getElementById("rec_boss"),ra=document.getElementById("rec_add");
+  if(!A.possible){need.textContent="—";sub.textContent="Ark Grid A is not a possible layout.";rap.textContent=rb.textContent=ra.textContent="—";return}
 
-update();
+  let target=parseFloat(document.getElementById("target_pct").value);
+  if(!Number.isFinite(target))target=A.pct;
+  target=Math.max(BASE_DMG,Math.min(MAX.pct,target));
+  document.getElementById("target_pct").value=target.toFixed(2);
+
+  if(target<=A.pct+1e-9){
+    need.textContent="0 points";need.className="compareValue good";
+    sub.textContent=`Current total damage is already +${A.pct.toFixed(2)}%, meeting the +${target.toFixed(2)}% target.`;
+    rap.textContent=rb.textContent=ra.textContent="+0";return;
+  }
+
+  const required=DfromTotalDmg(target)-A.D;
+  let best=null;
+
+  for(const l of A.layouts){
+    const caps={ap:Math.max(0,Math.floor(l.apCap-A.ap)),boss:Math.max(0,Math.floor(l.bossCap-A.boss)),add:Math.max(0,Math.floor(l.addCap-A.add))};
+    const totalHead=caps.ap+caps.boss+caps.add;
+    if(COEF.ap*caps.ap+COEF.boss*caps.boss+COEF.add*caps.add+1e-12<required)continue;
+
+    for(let n=1;n<=totalHead;n++){
+      let foundForN=false;
+      for(let b=0;b<=Math.min(caps.boss,n);b++) for(let ad=0;ad<=Math.min(caps.add,n-b);ad++){
+        const ap=n-b-ad;
+        if(ap<0||ap>caps.ap)continue;
+        const gain=b*COEF.boss+ad*COEF.add+ap*COEF.ap;
+        if(gain+1e-12<required)continue;
+        const excess=gain-required;
+        if(!best||n<best.n||(n===best.n&&excess<best.excess))best={n,boss:b,add:ad,ap,gain,excess};
+        foundForN=true;
+      }
+      if(foundForN)break;
+    }
+  }
+
+  if(!best){
+    need.textContent="Not reachable";need.className="compareValue bad";
+    sub.textContent=`The selected +${target.toFixed(2)}% target cannot be reached from these totals without exceeding a legal Ark Grid layout.`;
+    rap.textContent=rb.textContent=ra.textContent="—";return;
+  }
+
+  const finalPct=totalDmgFromD(A.D+best.gain);
+  need.textContent=best.n+" points";need.className="compareValue good";
+  sub.textContent=`Best-case minimum extra effect points to reach at least +${target.toFixed(2)}% total DMG. Recommended result: +${finalPct.toFixed(2)}%.`;
+  rap.textContent="+"+best.ap;rb.textContent="+"+best.boss;ra.textContent="+"+best.add;
+}
+
+document.querySelectorAll('input[type=number]').forEach(el=>el.addEventListener("input",updateComparison));
+document.getElementById("compareToggle").addEventListener("change",e=>document.getElementById("comparisonArea").classList.toggle("show",e.target.checked));
+document.getElementById("plannerToggle").addEventListener("change",e=>document.getElementById("plannerArea").classList.toggle("show",e.target.checked));
+document.getElementById("planBtn").addEventListener("click",planTarget);
+updateComparison();
 </script>
 </body>
 </html>
