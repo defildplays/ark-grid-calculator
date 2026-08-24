@@ -92,6 +92,29 @@ input[type=number]:focus{border-color:rgba(101,216,255,.8);box-shadow:0 0 0 3px 
 .plan-option .option-meta{margin-top:9px;color:var(--muted);font-size:11px;line-height:1.45}
 .planner-empty{grid-column:1/-1;color:var(--muted);font-size:12px;padding:8px 0;text-align:center}
 
+
+.visit-counter{
+  margin:22px auto 0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  width:max-content;
+  max-width:100%;
+  padding:9px 13px;
+  border:1px solid var(--border);
+  background:#0a0e14;
+  border-radius:999px;
+  color:var(--muted);
+  font-size:12px;
+}
+.visit-counter strong{color:var(--text);font-size:13px}
+.visit-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 10px rgba(85,227,154,.28);
+}
+
 </style>
 </head>
 <body>
@@ -250,6 +273,13 @@ Total DMG % = ((1.0289 × e^(D / 100)) − 1) × 100</div>
   The theoretical maximum under the current Ark Grid limits and damage formula is <strong>+18.62% Total DMG Increase</strong>.
 </div>
 </section>
+
+
+<div class="visit-counter" aria-label="Website visit count">
+  <span class="visit-dot" aria-hidden="true"></span>
+  <span>Visits</span>
+  <strong id="visit_count">—</strong>
+</div>
 
 <div class="footer">Ark Grid DPS% Calculator</div>
 </div>
@@ -530,11 +560,34 @@ function planTarget(){
   `).join("");
 }
 
+
+async function updateVisitCount(){
+  const el=document.getElementById("visit_count");
+  if(!el) return;
+
+  try{
+    const response=await fetch(
+      "https://countapi.mileshilliard.com/api/v1/hit/ark-grid-dps-calculator-imdefild",
+      {cache:"no-store"}
+    );
+    if(!response.ok) throw new Error("Counter request failed");
+
+    const data=await response.json();
+    if(typeof data.value!=="number") throw new Error("Invalid counter response");
+
+    el.textContent=data.value.toLocaleString();
+  }catch(error){
+    el.textContent="—";
+    el.title="Visit counter temporarily unavailable";
+  }
+}
+
 document.querySelectorAll('input[type=number]').forEach(el=>el.addEventListener("input",updateComparison));
 document.getElementById("compareToggle").addEventListener("change",e=>document.getElementById("comparisonArea").classList.toggle("show",e.target.checked));
 document.getElementById("plannerToggle").addEventListener("change",e=>document.getElementById("plannerArea").classList.toggle("show",e.target.checked));
 document.getElementById("planBtn").addEventListener("click",planTarget);
 updateComparison();
+updateVisitCount();
 </script>
 </body>
 </html>
